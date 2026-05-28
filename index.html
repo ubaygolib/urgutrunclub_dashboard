@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urgut Run Club - Leaderboard</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #ff5722;
+            --text-color: #c9d1d9;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: #fff; font-size: 24px; margin-bottom: 5px; }
+        .header p { color: #8b949e; margin: 0; font-size: 14px; }
+        .tabs { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .tab-btn {
+            background-color: var(--card-bg); color: var(--text-color);
+            border: 1px solid #30363d; padding: 10px 20px;
+            border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s;
+        }
+        .tab-btn.active { background-color: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+        .leaderboard-card { background-color: var(--card-bg); border: 1px solid #30363d; border-radius: 12px; padding: 10px; }
+        .player-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px; border-bottom: 1px solid #21262d; }
+        .player-row:last-child { border-bottom: none; }
+        .player-info { display: flex; align-items: center; gap: 12px; }
+        .rank { font-weight: bold; width: 25px; font-size: 16px; }
+        .name { font-weight: 600; color: #f0f6fc; }
+        .stats { text-align: right; font-weight: bold; }
+        .streak { color: #ff9800; font-size: 13px; margin-left: 5px; }
+        .loading { text-align: center; padding: 30px; color: #8b949e; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>🏆 Urgut Run Club</h1>
+        <p>Jonli Vizual Reyting Jadvali</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('run')">🏃‍♂️ Yugurish</button>
+        <button class="tab-btn" onclick="switchTab('walk')">🚶‍♂️ Yurish</button>
+        <button class="tab-btn" onclick="switchTab('cycle')">🚴‍♂️ Velosiped</button>
+    </div>
+
+    <div class="leaderboard-card" id="leaderboard">
+        <div class="loading">Ma'lumotlar yuklanmoqda... ⚡️</div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // ⚠️ Render-dagi saytingiz havolasini kiriting:
+        const RENDER_API_URL = "https://urgutrunclub-bot.onrender.com"; 
+        let currentActivity = 'run';
+
+        function switchTab(activity) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            currentActivity = activity;
+            loadLeaderboard();
+        }
+
+        async function loadLeaderboard() {
+            const container = document.getElementById('leaderboard');
+            container.innerHTML = '<div class="loading">Yangilanmoqda... 🔄</div>';
+            try {
+                const response = await fetch(`${RENDER_API_URL}/api/leaderboard/${currentActivity}`);
+                const result = await response.json();
+                if(!result.success || result.data.length === 0) {
+                    container.innerHTML = '<div class="loading">Hozircha natijalar mavjud emas. 📭</div>';
+                    return;
+                }
+                let html = '';
+                result.data.forEach((player, index) => {
+                    let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                    let streakHtml = player.strike > 0 ? `<span class="streak">🔥 ${player.strike} kun</span>` : '';
+                    html += `
+                        <div class="player-row">
+                            <div class="player-info">
+                                <div class="rank">${medal}</div>
+                                <div class="name">${player.name} ${streakHtml}</div>
+                            </div>
+                            <div class="stats">${player.distance} km</div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } catch (error) {
+                container.innerHTML = '<div class="loading" style="color: #f85149;">Xatolik! API bilan ulanishda xato bor. ❌</div>';
+            }
+        }
+        loadLeaderboard();
+    </script>
+</body>
+</html>

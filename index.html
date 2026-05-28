@@ -266,7 +266,7 @@
         <div class="state-container"><div class="spinner"></div>Yuklanmoqda...</div>
     </div>
 
-    <script>
+                <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         if(tg.colorScheme === 'dark') {
@@ -278,46 +278,34 @@
         const TARGET_DISTANCES = { 'run': 42.0, 'walk': 50.0, 'cycle': 100.0 };
         let targetEventDate = null;
 
-        // 📅 SERVERDAN MARAFON VA MATNLARINI OLIB KELISH FUNKSIYASI
         async function fetchEventData() {
             try {
                 const response = await fetch(`${RENDER_API_URL}/api/get_event`);
                 const result = await response.json();
-                
                 if (result.success && result.event_date) {
-                    // Kelgan vaqtni JS o'qiydigan qilib formatlaymiz: "2026-05-31 18:00:00" -> "2026/05/31 18:00:00"
                     targetEventDate = new Date(result.event_date.replace(/-/g, "/"));
-                    
-                    // Agar bazadan qo'shimcha matnlar ham kelgan bo'lsa ekranda yangilaydi
                     if (result.title) document.getElementById('event-title-text').innerText = result.title;
                     if (result.location) document.getElementById('event-location').innerText = "📍 Lokatsiya: " + result.location;
                     if (result.time_text) document.getElementById('event-time').innerText = "📅 Vaqti: " + result.time_text;
                 }
-            } catch (error) {
-                console.error("Marafon ma'lumotlarini yuklashda xatolik:", error);
-            }
+            } catch (error) { console.error("Xatolik:", error); }
         }
 
-        // 📅 COUNTDOWN TIMER CODES
         function updateCountdown() {
-            if (!targetEventDate) return; // Vaqt serverdan kelguncha hisoblamay turadi
-
+            if (!targetEventDate) return;
             const now = new Date();
             const diff = targetEventDate - now;
-            
-            if (diff <= 0) { // Muddat tugaganda hamma narsani nol qiladi
+            if (diff <= 0) {
                 document.getElementById('cd-d').innerText = "00";
                 document.getElementById('cd-h').innerText = "00";
                 document.getElementById('cd-m').innerText = "00";
                 document.getElementById('cd-s').innerText = "00";
                 return;
             }
-            
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((diff % (1000 * 60)) / 1000);
-
             document.getElementById('cd-d').innerText = d.toString().padStart(2, '0');
             document.getElementById('cd-h').innerText = h.toString().padStart(2, '0');
             document.getElementById('cd-m').innerText = m.toString().padStart(2, '0');
@@ -335,7 +323,6 @@
         async function loadLeaderboard() {
             const leaderboardList = document.getElementById('leaderboard-section');
             const podiumSection = document.getElementById('podium-section');
-            
             leaderboardList.innerHTML = `<div class="state-container"><div class="spinner"></div>Yangilanmoqda...</div>`;
             podiumSection.style.display = 'none';
 
@@ -345,94 +332,54 @@
 
                 if (!result.success || !result.data || result.data.length === 0) {
                     leaderboardList.innerHTML = '<div class="state-container">Hozircha natijalar mavjud emas. 📭</div>';
-                    document.getElementById('total-runners').innerText = "0";
-                    document.getElementById('total-distance').innerText = "0.0";
                     return;
                 }
 
                 const players = result.data;
                 const target = TARGET_DISTANCES[currentActivity];
 
-                // Global statistikalarni dinamik hisoblash va yangilash
-                let globalDistance = 0;
-                players.forEach(p => globalDistance += parseFloat(p.distance || 0));
-                document.getElementById('total-runners').innerText = players.length;
-                document.getElementById('total-distance').innerText = globalDistance.toFixed(1);
-
-                // --- Podium Qismi ---
+                // Podium
                 let podiumHtml = '';
-                const podiumOrder = [1, 0, 2]; // 2-o'rin, 1-o'rin, 3-o'rin
-                
+                const podiumOrder = [1, 0, 2];
                 podiumOrder.forEach(idx => {
                     if (players[idx]) {
                         const p = players[idx];
+                        const name = (p.name && p.name !== "null") ? p.name : "Foydalanuvchi";
                         const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉';
                         const posClass = idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3';
-                        podiumHtml += `
-                            <div class="podium-card ${posClass}">
-                                <div class="podium-badge">${medal}</div>
-                                <div class="podium-name">${p.name}</div>
-                                <div class="podium-score">${p.distance} <span style="font-size:10px; font-weight:500;">km</span></div>
-                            </div>
-                        `;
+                        podiumHtml += `<div class="podium-card ${posClass}"><div class="podium-badge">${medal}</div><div class="podium-name">${name}</div><div class="podium-score">${p.distance} km</div></div>`;
                     } else {
-                        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉';
-                        const posClass = idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3';
-                        podiumHtml += `
-                            <div class="podium-card ${posClass} empty">
-                                <div class="podium-badge" style="filter: grayscale(1); opacity: 0.2;">${medal}</div>
-                                <div class="podium-name" style="color: var(--text-muted);">-</div>
-                                <div class="podium-score" style="color: var(--text-muted);">0 <span style="font-size:10px;">km</span></div>
-                            </div>
-                        `;
+                        podiumHtml += `<div class="podium-card ${idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3'} empty"></div>`;
                     }
                 });
-                
                 podiumSection.innerHTML = podiumHtml;
                 podiumSection.style.display = 'flex';
 
-                // --- Ro'yxat Qismi ---
+                // Ro'yxat
                 let listHtml = '';
-                players.forEach((player, index) => {
-                    const progressPercent = Math.min((player.distance / target) * 100, 100).toFixed(0);
-                    const streakHtml = player.strike > 0 ? `<span class="streak-badge">🔥 ${player.strike} kun</span>` : '';
-                    let displayRank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                players.forEach((p, index) => {
+                    const name = (p.name && p.name !== "null") ? p.name : "Foydalanuvchi";
+                    const progress = Math.min((p.distance / target) * 100, 100).toFixed(0);
+                    const streak = p.strike > 0 ? `<span class="streak-badge">🔥 ${p.strike} kun</span>` : '';
+                    let rank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1;
 
                     listHtml += `
                         <div class="player-card">
                             <div class="player-left">
-                                <div class="player-rank">${displayRank}</div>
+                                <div class="player-rank">${rank}</div>
                                 <div class="player-details">
-                                    <div class="player-name-wrapper">
-                                        <span class="player-name">${player.name}</span>
-                                        ${streakHtml}
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar" style="width: ${progressPercent}%"></div>
-                                    </div>
+                                    <div class="player-name-wrapper"><span class="player-name">${name}</span>${streak}</div>
+                                    <div class="progress-container"><div class="progress-bar" style="width: ${progress}%"></div></div>
                                 </div>
                             </div>
-                            <div class="player-right">
-                                <div class="player-distance">${player.distance} km</div>
-                            </div>
-                        </div>
-                    `;
+                            <div class="player-right"><div class="player-distance">${p.distance} km</div></div>
+                        </div>`;
                 });
-
                 leaderboardList.innerHTML = listHtml;
-
             } catch (error) {
-                console.error(error);
-                leaderboardList.innerHTML = '<div class="state-container" style="color: #f85149;">Xatolik! API ulanishda xato bor. ❌</div>';
+                leaderboardList.innerHTML = '<div class="state-container">Xatolik yuz berdi.</div>';
             }
         }
 
-        // 🚀 Birinchi serverdan marafon ma'lumotlarini yuklaymiz, keyin taymer va reytingni yoqamiz
-        fetchEventData().then(() => {
-            setInterval(updateCountdown, 1000);
-            updateCountdown();
-            loadLeaderboard();
-        });
+        fetchEventData().then(() => { setInterval(updateCountdown, 1000); updateCountdown(); loadLeaderboard(); });
     </script>
-</body>
-</html>

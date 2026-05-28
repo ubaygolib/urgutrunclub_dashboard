@@ -222,13 +222,11 @@
 </head>
 <body>
 
-    <!-- Header -->
     <div class="header">
         <h1>🏆 Urgut Run Club</h1>
         <p>Jonli Sportiv Portal</p>
     </div>
 
-    <!-- 📊 KLUBNING UMUMIY STATISTIKASI -->
     <div class="stats-grid">
         <div class="stat-box">
             <div id="total-runners" class="value">0</div>
@@ -244,30 +242,26 @@
         </div>
     </div>
 
-    <!-- 📅 NAVBATDAGI MARAFON TAYMERI -->
     <div class="event-card">
-        <div class="event-title">🔥 Navbatdagi Umumiy Yig'ilish</div>
+        <div id="event-title-text" class="event-title">🔥 Navbatdagi Umumiy Yig'ilish</div>
         <div class="countdown-wrapper">
             <div class="countdown-item"><div id="cd-d" class="countdown-time">00</div><div class="countdown-label">Kun</div></div>
             <div class="countdown-item"><div id="cd-h" class="countdown-time">00</div><div class="countdown-label">Soat</div></div>
             <div class="countdown-item"><div id="cd-m" class="countdown-time">00</div><div class="countdown-label">Min</div></div>
             <div class="countdown-item"><div id="cd-s" class="countdown-time">00</div><div class="countdown-label">Sek</div></div>
         </div>
-        <div class="event-info">📍 Lokatsiya: Urgut Markaziy Istirohat Bog'i</div>
-        <div class="event-info">📅 Vaqti: Har Yakshanba, Soat 06:30 da</div>
+        <div id="event-location" class="event-info">📍 Lokatsiya: Urgut Markaziy Istirohat Bog'i</div>
+        <div id="event-time" class="event-info">📅 Vaqti: Har Yakshanba, Soat 06:30 da</div>
     </div>
 
-    <!-- Navigation Tabs -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('run')">🏃‍♂️ Yugurish</button>
         <button class="tab-btn" onclick="switchTab('walk')">🚶‍♂️ Yurish</button>
         <button class="tab-btn" onclick="switchTab('cycle')">🚴‍♂️ Velosiped</button>
     </div>
 
-    <!-- Top 3 Podium Section -->
     <div id="podium-section" class="podium-container" style="display: none;"></div>
 
-    <!-- Leaderboard List -->
     <div id="leaderboard-section" class="leaderboard-list">
         <div class="state-container"><div class="spinner"></div>Yuklanmoqda...</div>
     </div>
@@ -282,20 +276,42 @@
         const RENDER_API_URL = "https://urgutrunclub-bot.onrender.com"; 
         let currentActivity = 'run';
         const TARGET_DISTANCES = { 'run': 42.0, 'walk': 50.0, 'cycle': 100.0 };
+        let targetEventDate = null;
+
+        // 📅 SERVERDAN MARAFON VA MATNLARINI OLIB KELISH FUNKSIYASI
+        async function fetchEventData() {
+            try {
+                const response = await fetch(`${RENDER_API_URL}/api/get_event`);
+                const result = await response.json();
+                
+                if (result.success && result.event_date) {
+                    // Kelgan vaqtni JS o'qiydigan qilib formatlaymiz: "2026-05-31 18:00:00" -> "2026/05/31 18:00:00"
+                    targetEventDate = new Date(result.event_date.replace(/-/g, "/"));
+                    
+                    // Agar bazadan qo'shimcha matnlar ham kelgan bo'lsa ekranda yangilaydi
+                    if (result.title) document.getElementById('event-title-text').innerText = result.title;
+                    if (result.location) document.getElementById('event-location').innerText = "📍 Lokatsiya: " + result.location;
+                    if (result.time_text) document.getElementById('event-time').innerText = "📅 Vaqti: " + result.time_text;
+                }
+            } catch (error) {
+                console.error("Marafon ma'lumotlarini yuklashda xatolik:", error);
+            }
+        }
 
         // 📅 COUNTDOWN TIMER CODES
         function updateCountdown() {
-            const now = new Date();
-            // Kelgusi Yakshanba kunini hisoblash
-            const nextSunday = new Date();
-            nextSunday.setDate(now.getDate() + (7 - now.getDay()) % 7);
-            nextSunday.setHours(6, 30, 0, 0);
-            
-            if (now > nextSunday) { // Agar bugun yakshanba 06:30 dan o'tgan bo'lsa, keyingi yakshanbaga o'tkazadi
-                nextSunday.setDate(nextSunday.getDate() + 7);
-            }
+            if (!targetEventDate) return; // Vaqt serverdan kelguncha hisoblamay turadi
 
-            const diff = nextSunday - now;
+            const now = new Date();
+            const diff = targetEventDate - now;
+            
+            if (diff <= 0) { // Muddat tugaganda hamma narsani nol qiladi
+                document.getElementById('cd-d').innerText = "00";
+                document.getElementById('cd-h').innerText = "00";
+                document.getElementById('cd-m').innerText = "00";
+                document.getElementById('cd-s').innerText = "00";
+                return;
+            }
             
             const d = Math.floor(diff / (1000 * 60 * 60 * 24));
             const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -307,8 +323,6 @@
             document.getElementById('cd-m').innerText = m.toString().padStart(2, '0');
             document.getElementById('cd-s').innerText = s.toString().padStart(2, '0');
         }
-        setInterval(updateCountdown, 1000);
-        updateCountdown();
 
         function switchTab(activity) {
             if (currentActivity === activity) return;
@@ -413,7 +427,12 @@
             }
         }
 
-        loadLeaderboard();
+        // 🚀 Birinchi serverdan marafon ma'lumotlarini yuklaymiz, keyin taymer va reytingni yoqamiz
+        fetchEventData().then(() => {
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+            loadLeaderboard();
+        });
     </script>
 </body>
 </html>

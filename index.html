@@ -9,8 +9,8 @@
         :root {
             --bg-color: #0b0e14;
             --card-bg: #151a24;
-            --accent-color: #00ff88; /* Sportivnyy neon yashil */
-            --secondary-accent: #ff5722; /* Yugurish uchun to'q sariq */
+            --accent-color: #00ff88;
+            --secondary-accent: #ff5722;
             --text-main: #ffffff;
             --text-muted: #7e8c9a;
             --gold: #ffd700;
@@ -24,16 +24,16 @@
             color: var(--text-main);
             margin: 0;
             padding: 16px;
-            padding-bottom: 30px;
+            padding-bottom: 40px;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Premium Header */
+        /* Telegram tugmalari uchun tepadagi xavfsiz joy (Padding) */
         .header {
             text-align: center;
             margin-bottom: 24px;
-            padding-top: 10px;
+            padding-top: 28px; /* 12px dan 28px ga oshirildi */
         }
         .header h1 {
             font-size: 26px;
@@ -53,7 +53,6 @@
             letter-spacing: 1.5px;
         }
 
-        /* Modern Navigation Tabs */
         .tabs {
             display: flex;
             background-color: #1f2633;
@@ -84,7 +83,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
-        /* Top 3 Podium System */
         .podium-container {
             display: flex;
             justify-content: center;
@@ -112,6 +110,13 @@
         .podium-card.pos-2 { height: 85%; border-top: 3px solid var(--silver); }
         .podium-card.pos-3 { height: 75%; border-top: 3px solid var(--bronze); }
         
+        /* Bo'sh shoxsupa stili */
+        .podium-card.empty {
+            border-top: 3px dashed #222b3c;
+            background: rgba(21, 26, 36, 0.4);
+            opacity: 0.4;
+        }
+
         .podium-badge {
             font-size: 24px;
             margin-bottom: 6px;
@@ -134,7 +139,6 @@
         }
         .podium-card.pos-1 .podium-score { color: var(--gold); }
 
-        /* General Leaderboard List */
         .leaderboard-list {
             display: flex;
             flex-direction: column;
@@ -149,10 +153,6 @@
             justify-content: space-between;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             border: 1px solid rgba(255,255,255,0.02);
-            transition: transform 0.2s;
-        }
-        .player-card:active {
-            transform: scale(0.98);
         }
         .player-left {
             display: flex;
@@ -161,23 +161,26 @@
             flex: 1;
         }
         .player-rank {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--text-muted);
-            width: 24px;
+            width: 28px;
             text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .player-details {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
             flex: 1;
             padding-right: 10px;
         }
         .player-name-wrapper {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         .player-name {
             font-weight: 700;
@@ -194,21 +197,18 @@
             white-space: nowrap;
         }
         
-        /* Premium Progress Bar System */
         .progress-container {
             width: 100%;
             height: 5px;
             background-color: #222b3c;
             border-radius: 3px;
             overflow: hidden;
-            margin-top: 2px;
         }
         .progress-bar {
             height: 100%;
             background: linear-gradient(90deg, var(--secondary-accent), var(--accent-color));
             border-radius: 3px;
             width: 0%;
-            transition: width 0.8s cubic-bezier(0.1, 0.8, 0.25, 1);
         }
 
         .player-right {
@@ -220,7 +220,6 @@
             color: var(--accent-color);
         }
 
-        /* States (Loading / Empty / Error) */
         .state-container {
             text-align: center;
             padding: 40px 20px;
@@ -256,8 +255,7 @@
         <button class="tab-btn" onclick="switchTab('cycle')">🚴‍♂️ Velosiped</button>
     </div>
 
-    <div id="podium-section" class="podium-container" style="display: none;">
-        </div>
+    <div id="podium-section" class="podium-container" style="display: none;"></div>
 
     <div id="leaderboard-section" class="leaderboard-list">
         <div class="state-container">
@@ -269,7 +267,6 @@
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        // Ranglarni avtomatik Telegram mavzusiga moslash uchun tayyorgarlik
         if(tg.colorScheme === 'dark') {
             document.documentElement.style.setProperty('--bg-color', tg.backgroundColor || '#0b0e14');
         }
@@ -277,12 +274,7 @@
         const RENDER_API_URL = "https://urgutrunclub-bot.onrender.com"; 
         let currentActivity = 'run';
         
-        // Dinamik progress hisoblash uchun maqsad masofalar (km)
-        const TARGET_DISTANCES = {
-            'run': 42.0,   // Masalan: Marafon maqsadi 42km
-            'walk': 50.0,  // Yurish maqsadi 50km
-            'cycle': 100.0 // Velosiped maqsadi 100km
-        };
+        const TARGET_DISTANCES = { 'run': 42.0, 'walk': 50.0, 'cycle': 100.0 };
 
         function switchTab(activity) {
             if (currentActivity === activity) return;
@@ -296,12 +288,7 @@
             const leaderboardList = document.getElementById('leaderboard-section');
             const podiumSection = document.getElementById('podium-section');
             
-            leaderboardList.innerHTML = `
-                <div class="state-container">
-                    <div class="spinner"></div>
-                    Yangilanmoqda...
-                </div>
-            `;
+            leaderboardList.innerHTML = `<div class="state-container"><div class="spinner"></div>Yangilanmoqda...</div>`;
             podiumSection.style.display = 'none';
 
             try {
@@ -316,17 +303,15 @@
                 const players = result.data;
                 const target = TARGET_DISTANCES[currentActivity];
 
-                // --- 1. Shoxsupa (Podium) Qismini Qurish ---
+                // --- 1. Shoxsupa tizimi (Bo'sh joylar bilan) ---
                 let podiumHtml = '';
-                // Shoxsupa tartibi: 2-o'rin (chapda), 1-o'rin (markazda), 3-o'rin (ongda)
-                const podiumOrder = [1, 0, 2]; 
+                const podiumOrder = [1, 0, 2]; // 2-o'rin, 1-o'rin, 3-o'rin
                 
                 podiumOrder.forEach(idx => {
                     if (players[idx]) {
                         const p = players[idx];
                         const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉';
                         const posClass = idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3';
-                        
                         podiumHtml += `
                             <div class="podium-card ${posClass}">
                                 <div class="podium-badge">${medal}</div>
@@ -334,26 +319,30 @@
                                 <div class="podium-score">${p.distance} <span style="font-size:10px; font-weight:500;">km</span></div>
                             </div>
                         `;
-                    } else if (idx === 2 && players.length == 2) {
-                        // Agar bor-yo'g'i 2 ta o'yinchi bo'lsa, uchinchi shoxsupani bo'sh qoldiramiz
-                        podiumHtml += `<div class="podium-card pos-3" style="visibility:hidden;"></div>`;
+                    } else {
+                        // Bo'sh shoxsupalar o'rni uchun xira kartochka
+                        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉';
+                        const posClass = idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3';
+                        podiumHtml += `
+                            <div class="podium-card ${posClass} empty">
+                                <div class="podium-badge" style="filter: grayscale(1); opacity: 0.3;">${medal}</div>
+                                <div class="podium-name" style="color: var(--text-muted);">-</div>
+                                <div class="podium-score" style="color: var(--text-muted);">0 <span style="font-size:10px;">km</span></div>
+                            </div>
+                        `;
                     }
                 });
                 
-                if(players.length > 0) {
-                    podiumSection.innerHTML = podiumHtml;
-                    podiumSection.style.display = 'flex';
-                }
+                podiumSection.innerHTML = podiumHtml;
+                podiumSection.style.display = 'flex';
 
-                // --- 2. Umumiy Ro'yxat Qismini Qurish (4-o'rindan pastdagilar yoki hamma) ---
+                // --- 2. Toza ro'yxat qismi (Medallar chalkashligisiz) ---
                 let listHtml = '';
-                
                 players.forEach((player, index) => {
-                    // Progress foizini hisoblash (Maksimal 100%)
                     const progressPercent = Math.min((player.distance / target) * 100, 100).toFixed(0);
                     const streakHtml = player.strike > 0 ? `<span class="streak-badge">🔥 ${player.strike} kun</span>` : '';
                     
-                    // Ro'yxatda o'rin belgisini aniqlash
+                    // Medallarni faqat toza emojida chiqarish (Chalkashliksiz)
                     let displayRank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
 
                     listHtml += `
@@ -385,7 +374,6 @@
             }
         }
 
-        // Sahifa yuklanganda srazu ishga tushirish
         loadLeaderboard();
     </script>
 </body>

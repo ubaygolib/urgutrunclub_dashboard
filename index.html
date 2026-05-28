@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Urgut Run Club - Premium Dashboard</title>
+    <title>Urgut Run Club - Pro Dashboard</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-color: #0b0e14;
             --card-bg: #151a24;
-            --accent-color: #00ff88;
-            --secondary-accent: #ff5722;
+            --accent-color: #00ff88; /* Neon Yashil */
+            --secondary-accent: #ff5722; /* To'q sariq */
             --text-main: #ffffff;
             --text-muted: #7e8c9a;
             --gold: #ffd700;
@@ -24,22 +24,21 @@
             color: var(--text-main);
             margin: 0;
             padding: 16px;
-            padding-bottom: 40px;
+            padding-bottom: 50px;
             -webkit-user-select: none;
             user-select: none;
         }
 
-        /* Telegram tugmalari uchun tepadagi xavfsiz joy (Padding) */
+        /* Telegram xavfsiz zonasi */
         .header {
             text-align: center;
-            margin-bottom: 24px;
-            padding-top: 28px; /* 12px dan 28px ga oshirildi */
+            margin-bottom: 20px;
+            padding-top: 28px;
         }
         .header h1 {
             font-size: 26px;
             font-weight: 800;
-            margin: 0 0 6px 0;
-            letter-spacing: -0.5px;
+            margin: 0 0 4px 0;
             background: linear-gradient(135deg, #fff 0%, var(--text-muted) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -47,19 +46,96 @@
         .header p {
             color: var(--accent-color);
             margin: 0;
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
         }
 
+        /* 📊 GLOBAL STATS BLOCK */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.02);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .stat-box .value {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--accent-color);
+            margin-bottom: 2px;
+        }
+        .stat-box .label {
+            font-size: 10px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* 📅 NEXT EVENT COUNTDOWN */
+        .event-card {
+            background: linear-gradient(135deg, #1e2633 0%, var(--card-bg) 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--secondary-accent);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+        .event-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .countdown-wrapper {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .countdown-item {
+            background: rgba(0,0,0,0.3);
+            padding: 6px 10px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 40px;
+        }
+        .countdown-time {
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--secondary-accent);
+        }
+        .countdown-label {
+            font-size: 9px;
+            color: var(--text-muted);
+        }
+        .event-info {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        /* Navigation Tabs */
         .tabs {
             display: flex;
             background-color: #1f2633;
             padding: 4px;
             border-radius: 14px;
             gap: 4px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
         .tab-btn {
             flex: 1;
@@ -74,8 +150,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            transition: all 0.25s ease;
+            gap: 4px;
         }
         .tab-btn.active {
             background-color: var(--card-bg);
@@ -83,6 +158,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
+        /* Top 3 Podium Stage */
         .podium-container {
             display: flex;
             justify-content: center;
@@ -90,7 +166,7 @@
             gap: 12px;
             margin-bottom: 24px;
             padding: 0 8px;
-            height: 160px;
+            height: 150px;
         }
         .podium-card {
             flex: 1;
@@ -109,41 +185,15 @@
         .podium-card.pos-1 { height: 100%; border-top: 3px solid var(--gold); }
         .podium-card.pos-2 { height: 85%; border-top: 3px solid var(--silver); }
         .podium-card.pos-3 { height: 75%; border-top: 3px solid var(--bronze); }
-        
-        /* Bo'sh shoxsupa stili */
-        .podium-card.empty {
-            border-top: 3px dashed #222b3c;
-            background: rgba(21, 26, 36, 0.4);
-            opacity: 0.4;
-        }
+        .podium-card.empty { border-top: 3px dashed #222b3c; background: rgba(21, 26, 36, 0.4); opacity: 0.4; }
 
-        .podium-badge {
-            font-size: 24px;
-            margin-bottom: 6px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-        }
-        .podium-name {
-            font-weight: 700;
-            font-size: 13px;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            margin-bottom: 4px;
-        }
-        .podium-score {
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--accent-color);
-        }
+        .podium-badge { font-size: 22px; margin-bottom: 4px; }
+        .podium-name { font-weight: 700; font-size: 12px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 2px; }
+        .podium-score { font-size: 14px; font-weight: 800; color: var(--accent-color); }
         .podium-card.pos-1 .podium-score { color: var(--gold); }
 
-        .leaderboard-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        /* Leaderboard List */
+        .leaderboard-list { display: flex; flex-direction: column; gap: 10px; }
         .player-card {
             background-color: var(--card-bg);
             border-radius: 14px;
@@ -151,117 +201,75 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             border: 1px solid rgba(255,255,255,0.02);
         }
-        .player-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            flex: 1;
-        }
-        .player-rank {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--text-muted);
-            width: 28px;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .player-details {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            flex: 1;
-            padding-right: 10px;
-        }
-        .player-name-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .player-name {
-            font-weight: 700;
-            font-size: 15px;
-            color: #f0f6fc;
-        }
-        .streak-badge {
-            background: rgba(255, 152, 0, 0.15);
-            color: #ff9800;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 6px;
-            white-space: nowrap;
-        }
+        .player-left { display: flex; align-items: center; gap: 14px; flex: 1; }
+        .player-rank { font-size: 16px; font-weight: 800; color: var(--text-muted); width: 28px; text-align: center; }
+        .player-details { display: flex; flex-direction: column; gap: 6px; flex: 1; padding-right: 10px; }
+        .player-name-wrapper { display: flex; align-items: center; gap: 8px; }
+        .player-name { font-weight: 700; font-size: 15px; color: #f0f6fc; }
+        .streak-badge { background: rgba(255, 152, 0, 0.15); color: #ff9800; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
         
-        .progress-container {
-            width: 100%;
-            height: 5px;
-            background-color: #222b3c;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-accent), var(--accent-color));
-            border-radius: 3px;
-            width: 0%;
-        }
+        .progress-container { width: 100%; height: 5px; background-color: #222b3c; border-radius: 3px; overflow: hidden; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--secondary-accent), var(--accent-color)); width: 0%; }
+        .player-right { text-align: right; }
+        .player-distance { font-size: 16px; font-weight: 800; color: var(--accent-color); }
 
-        .player-right {
-            text-align: right;
-        }
-        .player-distance {
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--accent-color);
-        }
-
-        .state-container {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-weight: 600;
-            font-size: 15px;
-        }
-        .spinner {
-            width: 30px;
-            height: 30px;
-            border: 3px solid #222b3c;
-            border-top: 3px solid var(--accent-color);
-            border-radius: 50%;
-            margin: 0 auto 12px auto;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .state-container { text-align: center; padding: 40px 20px; color: var(--text-muted); font-weight: 600; }
+        .spinner { width: 24px; height: 24px; border: 3px solid #222b3c; border-top: 3px solid var(--accent-color); border-radius: 50%; margin: 0 auto 12px auto; animation: spin 0.8s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+    <!-- Header -->
     <div class="header">
         <h1>🏆 Urgut Run Club</h1>
-        <p>Jonli Sportiv Reyting</p>
+        <p>Jonli Sportiv Portal</p>
     </div>
 
+    <!-- 📊 KLUBNING UMUMIY STATISTIKASI -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div id="total-runners" class="value">0</div>
+            <div class="label">🏃‍♂️ Faollar</div>
+        </div>
+        <div class="stat-box">
+            <div id="total-distance" class="value">0.0</div>
+            <div class="label">🏁 Jami Km</div>
+        </div>
+        <div class="stat-box">
+            <div class="value" style="color: var(--secondary-accent);">#1</div>
+            <div class="label">⛰ Urgut</div>
+        </div>
+    </div>
+
+    <!-- 📅 NAVBATDAGI MARAFON TAYMERI -->
+    <div class="event-card">
+        <div class="event-title">🔥 Navbatdagi Umumiy Yig'ilish</div>
+        <div class="countdown-wrapper">
+            <div class="countdown-item"><div id="cd-d" class="countdown-time">00</div><div class="countdown-label">Kun</div></div>
+            <div class="countdown-item"><div id="cd-h" class="countdown-time">00</div><div class="countdown-label">Soat</div></div>
+            <div class="countdown-item"><div id="cd-m" class="countdown-time">00</div><div class="countdown-label">Min</div></div>
+            <div class="countdown-item"><div id="cd-s" class="countdown-time">00</div><div class="countdown-label">Sek</div></div>
+        </div>
+        <div class="event-info">📍 Lokatsiya: Urgut Markaziy Istirohat Bog'i</div>
+        <div class="event-info">📅 Vaqti: Har Yakshanba, Soat 06:30 da</div>
+    </div>
+
+    <!-- Navigation Tabs -->
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab('run')">🏃‍♂️ Yugurish</button>
         <button class="tab-btn" onclick="switchTab('walk')">🚶‍♂️ Yurish</button>
         <button class="tab-btn" onclick="switchTab('cycle')">🚴‍♂️ Velosiped</button>
     </div>
 
+    <!-- Top 3 Podium Section -->
     <div id="podium-section" class="podium-container" style="display: none;"></div>
 
+    <!-- Leaderboard List -->
     <div id="leaderboard-section" class="leaderboard-list">
-        <div class="state-container">
-            <div class="spinner"></div>
-            Ma'lumotlar yuklanmoqda...
-        </div>
+        <div class="state-container"><div class="spinner"></div>Yuklanmoqda...</div>
     </div>
 
     <script>
@@ -273,8 +281,34 @@
 
         const RENDER_API_URL = "https://urgutrunclub-bot.onrender.com"; 
         let currentActivity = 'run';
-        
         const TARGET_DISTANCES = { 'run': 42.0, 'walk': 50.0, 'cycle': 100.0 };
+
+        // 📅 COUNTDOWN TIMER CODES
+        function updateCountdown() {
+            const now = new Date();
+            // Kelgusi Yakshanba kunini hisoblash
+            const nextSunday = new Date();
+            nextSunday.setDate(now.getDate() + (7 - now.getDay()) % 7);
+            nextSunday.setHours(6, 30, 0, 0);
+            
+            if (now > nextSunday) { // Agar bugun yakshanba 06:30 dan o'tgan bo'lsa, keyingi yakshanbaga o'tkazadi
+                nextSunday.setDate(nextSunday.getDate() + 7);
+            }
+
+            const diff = nextSunday - now;
+            
+            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('cd-d').innerText = d.toString().padStart(2, '0');
+            document.getElementById('cd-h').innerText = h.toString().padStart(2, '0');
+            document.getElementById('cd-m').innerText = m.toString().padStart(2, '0');
+            document.getElementById('cd-s').innerText = s.toString().padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
 
         function switchTab(activity) {
             if (currentActivity === activity) return;
@@ -297,13 +331,21 @@
 
                 if (!result.success || !result.data || result.data.length === 0) {
                     leaderboardList.innerHTML = '<div class="state-container">Hozircha natijalar mavjud emas. 📭</div>';
+                    document.getElementById('total-runners').innerText = "0";
+                    document.getElementById('total-distance').innerText = "0.0";
                     return;
                 }
 
                 const players = result.data;
                 const target = TARGET_DISTANCES[currentActivity];
 
-                // --- 1. Shoxsupa tizimi (Bo'sh joylar bilan) ---
+                // Global statistikalarni dinamik hisoblash va yangilash
+                let globalDistance = 0;
+                players.forEach(p => globalDistance += parseFloat(p.distance || 0));
+                document.getElementById('total-runners').innerText = players.length;
+                document.getElementById('total-distance').innerText = globalDistance.toFixed(1);
+
+                // --- Podium Qismi ---
                 let podiumHtml = '';
                 const podiumOrder = [1, 0, 2]; // 2-o'rin, 1-o'rin, 3-o'rin
                 
@@ -320,12 +362,11 @@
                             </div>
                         `;
                     } else {
-                        // Bo'sh shoxsupalar o'rni uchun xira kartochka
                         const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : '🥉';
                         const posClass = idx === 0 ? 'pos-1' : idx === 1 ? 'pos-2' : 'pos-3';
                         podiumHtml += `
                             <div class="podium-card ${posClass} empty">
-                                <div class="podium-badge" style="filter: grayscale(1); opacity: 0.3;">${medal}</div>
+                                <div class="podium-badge" style="filter: grayscale(1); opacity: 0.2;">${medal}</div>
                                 <div class="podium-name" style="color: var(--text-muted);">-</div>
                                 <div class="podium-score" style="color: var(--text-muted);">0 <span style="font-size:10px;">km</span></div>
                             </div>
@@ -336,13 +377,11 @@
                 podiumSection.innerHTML = podiumHtml;
                 podiumSection.style.display = 'flex';
 
-                // --- 2. Toza ro'yxat qismi (Medallar chalkashligisiz) ---
+                // --- Ro'yxat Qismi ---
                 let listHtml = '';
                 players.forEach((player, index) => {
                     const progressPercent = Math.min((player.distance / target) * 100, 100).toFixed(0);
                     const streakHtml = player.strike > 0 ? `<span class="streak-badge">🔥 ${player.strike} kun</span>` : '';
-                    
-                    // Medallarni faqat toza emojida chiqarish (Chalkashliksiz)
                     let displayRank = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
 
                     listHtml += `
@@ -370,7 +409,7 @@
 
             } catch (error) {
                 console.error(error);
-                leaderboardList.innerHTML = '<div class="state-container" style="color: #f85149;">Xatolik! API server bilan ulanishda xato yuz berdi. ❌</div>';
+                leaderboardList.innerHTML = '<div class="state-container" style="color: #f85149;">Xatolik! API ulanishda xato bor. ❌</div>';
             }
         }
 

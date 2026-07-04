@@ -49,7 +49,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 60px;
+      padding-bottom: 90px; /* Pastki menyu ustini yopib qo'ymasligi uchun o'zgartirildi */
     }
 
     /* ── AMBIENT GLOW ── */
@@ -126,25 +126,79 @@
       50%      { opacity: 0.3; box-shadow: none; }
     }
 
-    /* ── STATS ROW ── */
-    .stats-row {
-      display: grid; grid-template-columns: repeat(3, 1fr);
-      gap: 10px; padding: 20px 20px 0;
+    /* ── MULTI-VIEW SYSTEM (YANGI QO'SHILDI) ── */
+    .view-section { display: none; animation: fadeIn 0.4s ease; }
+    .view-section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── BOTTOM NAVIGATION (YANGI QO'SHILDI) ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: rgba(15, 21, 32, 0.95);
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      border-top: 1px solid rgba(255,255,255,0.05);
+      display: flex; justify-content: space-around;
+      padding: 12px 10px 24px; /* Mobile safe area uchun pastdan joy */
+      z-index: 100;
     }
-    .stat-tile {
-      background: var(--bg-card);
+    .nav-btn {
+      background: none; border: none; outline: none;
+      color: var(--text-muted);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+      cursor: pointer; transition: 0.3s; flex: 1;
+    }
+    .nav-btn.active { color: var(--cyan); }
+    .nav-icon { font-size: 22px; margin-bottom: 2px; transition: 0.3s; }
+    .nav-btn.active .nav-icon { transform: translateY(-3px) scale(1.1); filter: drop-shadow(0 4px 8px rgba(0, 200, 255, 0.4)); }
+    .nav-indicator { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); opacity: 0; transition: 0.3s; transform: translateY(5px); }
+    .nav-btn.active .nav-indicator { opacity: 1; transform: translateY(0); }
+
+
+    /* ── VIEWS STYLES: ROUTES & PROFILE (YANGI) ── */
+    .routes-wrap, .profile-wrap { padding: 20px; }
+    
+    .route-card {
+      background: var(--bg-card); border-radius: var(--radius);
       border: 1px solid rgba(255,255,255,0.04);
-      border-radius: var(--radius);
-      padding: 14px 10px;
-      text-align: center;
-      position: relative; overflow: hidden;
-      transition: transform 0.2s;
+      margin-bottom: 16px; overflow: hidden; position: relative;
     }
-    .stat-tile::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
+    .route-img {
+      height: 120px; background: linear-gradient(45deg, var(--surface), var(--surface-2));
+      display: flex; align-items: center; justify-content: center; font-size: 30px;
     }
+    .route-badge {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+      padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; color: var(--white);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .route-info { padding: 16px; }
+    .route-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+    .route-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+    .route-meta { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--cyan); }
+
+    .profile-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan), var(--red));
+      margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 32px; border: 3px solid var(--bg); outline: 2px solid var(--cyan-glow);
+    }
+    .profile-name { font-size: 20px; font-weight: 800; color: var(--white); margin-bottom: 4px; text-align: center; }
+    .profile-id { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; text-align: center; }
+    .coming-soon-card {
+      background: linear-gradient(135deg, rgba(0,200,255,0.05), rgba(255,61,61,0.05));
+      border: 1px dashed rgba(0,200,255,0.3); border-radius: var(--radius); padding: 24px; text-align: center;
+    }
+    .cs-icon { font-size: 32px; margin-bottom: 12px; }
+    .cs-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
+    .cs-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+
+    /* ── ORIGINAL RATING VIEW CSS ── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 20px 0; }
+    .stat-tile { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: var(--radius); padding: 14px 10px; text-align: center; position: relative; overflow: hidden; transition: transform 0.2s; }
+    .stat-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
     .stat-tile.c::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
     .stat-tile.r::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
     .stat-tile.w::before { background: linear-gradient(90deg, transparent, var(--white), transparent); }
@@ -154,208 +208,72 @@
     .stat-value.w { color: var(--white); }
     .stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
 
-    /* ── COUNTDOWN CARD ── */
-    .countdown-card {
-      margin: 18px 20px 0;
-      background: var(--bg-card);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(0,200,255,0.1);
-      padding: 18px 18px 16px;
-      position: relative; overflow: hidden;
-    }
-    .countdown-card::before {
-      content: '';
-      position: absolute; left: 0; top: 0; bottom: 0;
-      width: 3px;
-      background: linear-gradient(180deg, var(--cyan), var(--red));
-    }
+    .countdown-card { margin: 18px 20px 0; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid rgba(0,200,255,0.1); padding: 18px 18px 16px; position: relative; overflow: hidden; }
+    .countdown-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--cyan), var(--red)); }
     .cd-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
     .cd-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
     .cd-blocks { display: flex; gap: 8px; }
-    .cd-block {
-      flex: 1;
-      background: var(--surface);
-      border-radius: var(--radius-sm);
-      padding: 8px 6px;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
+    .cd-block { flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
     .cd-num { font-size: 22px; font-weight: 900; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; }
     .cd-lbl { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
     .cd-meta { display: flex; gap: 14px; margin-top: 12px; }
     .cd-meta-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
     .cd-meta-item strong { color: var(--text); font-weight: 600; }
 
-    /* ── ACTIVITY TABS ── */
     .tabs-wrap { padding: 18px 20px 0; }
-    .tabs {
-      display: flex;
-      background: var(--surface);
-      border-radius: var(--radius);
-      padding: 4px; gap: 4px;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-    .tab-btn {
-      flex: 1;
-      background: none; border: none;
-      color: var(--text-muted);
-      padding: 11px 6px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 700; font-size: 12px;
-      display: flex; align-items: center; justify-content: center; gap: 5px;
-      transition: all 0.22s;
-      white-space: nowrap;
-    }
-    .tab-btn.active {
-      background: linear-gradient(135deg, var(--cyan-dim), rgba(255,61,61,0.08));
-      color: var(--cyan);
-      border: 1px solid rgba(0,200,255,0.2);
-      box-shadow: 0 2px 12px rgba(0,200,255,0.1);
-    }
+    .tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 4px; gap: 4px; border: 1px solid rgba(255,255,255,0.04); }
+    .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); padding: 11px 6px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.22s; white-space: nowrap; }
+    .tab-btn.active { background: linear-gradient(135deg, var(--cyan-dim), rgba(255,61,61,0.08)); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); box-shadow: 0 2px 12px rgba(0,200,255,0.1); }
 
-    /* ── TIME FILTERS (Yangi Qushilgan Joy) ── */
     .time-filters-wrap { padding: 12px 20px 0; }
-    .time-tabs {
-      display: flex; gap: 6px;
-    }
-    .time-btn {
-      flex: 1;
-      background: var(--surface-2);
-      border: 1px solid rgba(255,255,255,0.04);
-      color: var(--text-muted);
-      padding: 8px 4px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .time-btn.active {
-      background: var(--surface);
-      color: var(--white);
-      border-color: rgba(255,255,255,0.15);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    }
+    .time-tabs { display: flex; gap: 6px; }
+    .time-btn { flex: 1; background: var(--surface-2); border: 1px solid rgba(255,255,255,0.04); color: var(--text-muted); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    .time-btn.active { background: var(--surface); color: var(--white); border-color: rgba(255,255,255,0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
 
-    /* ── PODIUM ── */
-    .podium-wrap {
-      padding: 18px 20px 0;
-      display: none;
-    }
+    .podium-wrap { padding: 18px 20px 0; display: none; }
     .podium-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
-    .podium-stage {
-      display: flex; align-items: flex-end; justify-content: center;
-      gap: 10px; height: 148px;
-    }
-    .podium-card {
-      flex: 1;
-      background: var(--bg-card);
-      border-radius: var(--radius) var(--radius) 0 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-      padding: 10px 6px 14px;
-      position: relative; overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.04);
-      border-bottom: none;
-    }
+    .podium-stage { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 148px; }
+    .podium-card { flex: 1; background: var(--bg-card); border-radius: var(--radius) var(--radius) 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 10px 6px 14px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.04); border-bottom: none; }
     .podium-card.pos-1 { height: 100%; border-top: 2px solid var(--gold); }
     .podium-card.pos-2 { height: 82%; border-top: 2px solid var(--silver); }
     .podium-card.pos-3 { height: 70%; border-top: 2px solid var(--bronze); }
     .podium-card.empty { border-top: 2px dashed var(--surface-2); opacity: 0.35; }
-    .podium-card.pos-1::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse at top, rgba(255,215,0,0.06) 0%, transparent 70%);
-    }
+    .podium-card.pos-1::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(255,215,0,0.06) 0%, transparent 70%); }
     .podium-emoji { font-size: 22px; margin-bottom: 4px; }
     .podium-name { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 3px; }
     .podium-km { font-size: 14px; font-weight: 900; color: var(--cyan); }
     .podium-card.pos-1 .podium-km { color: var(--gold); }
 
-    /* ── LEADERBOARD ── */
     .board-wrap { padding: 14px 20px 0; }
     .board-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
     .board-list { display: flex; flex-direction: column; gap: 9px; }
 
-    .player-row {
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      padding: 13px 14px;
-      display: flex; align-items: center; gap: 12px;
-      border: 1px solid rgba(255,255,255,0.03);
-      position: relative; overflow: hidden;
-      transition: transform 0.18s, box-shadow 0.18s;
-    }
+    .player-row { background: var(--bg-card); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; transition: transform 0.18s, box-shadow 0.18s; }
     .player-row:active { transform: scale(0.98); }
     .player-row.top1 { border-color: rgba(255,215,0,0.18); background: linear-gradient(135deg, rgba(255,215,0,0.05), var(--bg-card)); }
     .player-row.top2 { border-color: rgba(184,200,216,0.14); }
     .player-row.top3 { border-color: rgba(205,140,80,0.14); }
-
     .player-rank { font-size: 17px; font-weight: 900; min-width: 26px; text-align: center; }
     .player-rank.num { color: var(--text-muted); font-size: 15px; }
     .player-info { flex: 1; min-width: 0; }
     .player-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .player-name { font-size: 15px; font-weight: 700; color: var(--text); }
-    .fire-badge {
-      background: rgba(255,152,0,0.14);
-      color: #FF9800;
-      font-size: 10px; font-weight: 700;
-      padding: 2px 7px; border-radius: 6px;
-      white-space: nowrap;
-    }
-    .prog-track {
-      height: 4px; background: var(--surface-2);
-      border-radius: 99px; overflow: hidden;
-    }
-    .prog-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--red), var(--cyan));
-      border-radius: 99px;
-      width: 0%;
-      transition: width 0.8s cubic-bezier(.4,0,.2,1);
-    }
+    .fire-badge { background: rgba(255,152,0,0.14); color: #FF9800; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+    .prog-track { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
     .player-row.top1 .prog-fill { background: linear-gradient(90deg, var(--gold), #FFA500); }
     .player-km { font-size: 16px; font-weight: 900; color: var(--cyan); min-width: 52px; text-align: right; }
     .player-row.top1 .player-km { color: var(--gold); }
 
-    /* State: loading / empty */
     .state-box { text-align: center; padding: 48px 20px; color: var(--text-muted); }
     .state-icon { font-size: 32px; margin-bottom: 12px; }
     .state-text { font-size: 14px; font-weight: 600; }
-    .loader {
-      width: 28px; height: 28px;
-      border: 3px solid var(--surface);
-      border-top-color: var(--cyan);
-      border-radius: 50%;
-      margin: 0 auto 14px;
-      animation: spin 0.7s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── SHIMMER skeletons ── */
-    @keyframes shimmer {
-      from { background-position: -400px 0; }
-      to   { background-position: 400px 0; }
-    }
-    .skeleton {
-      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
-      background-size: 800px 100%;
-      animation: shimmer 1.4s infinite;
-      border-radius: var(--radius);
-      height: 66px;
-    }
-
-    /* ── SECTION DIVIDER ── */
+    
+    @keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
+    .skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); height: 66px; }
+    
     .section-div { height: 1px; background: rgba(255,255,255,0.04); margin: 20px 20px 0; }
-
-    /* ── BOTTOM FOOTER ── */
-    .footer {
-      text-align: center;
-      padding: 28px 20px 0;
-      font-size: 11px;
-      color: var(--text-dim);
-      letter-spacing: 0.06em;
-    }
+    .footer { text-align: center; padding: 28px 20px 0; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
     .footer span { color: var(--cyan); font-weight: 700; }
   </style>
 </head>
@@ -375,7 +293,7 @@
 <!-- ── APP ── -->
 <div id="app">
 
-  <!-- HEADER -->
+  <!-- HEADER (Hamma oynada ko'rinib turadi) -->
   <div class="header">
     <div class="header-left">
       <div class="header-eyebrow">Sportiv Portal 2026</div>
@@ -384,77 +302,127 @@
     <div class="live-badge"><div class="live-dot"></div>JONLI</div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-row">
-    <div class="stat-tile c">
-      <div id="total-runners" class="stat-value c">—</div>
-      <div class="stat-label">🏃 Faollar</div>
+  <!-- 1. VIEW: RATING (ASOSIY OYNA) -->
+  <div id="view-rating" class="view-section active">
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-tile c"><div id="total-runners" class="stat-value c">—</div><div class="stat-label">🏃 Faollar</div></div>
+      <div class="stat-tile r"><div id="total-distance" class="stat-value r">—</div><div class="stat-label">🏁 Jami km</div></div>
+      <div class="stat-tile w"><div class="stat-value w">#1</div><div class="stat-label">⛰ Urgut</div></div>
     </div>
-    <div class="stat-tile r">
-      <div id="total-distance" class="stat-value r">—</div>
-      <div class="stat-label">🏁 Jami km</div>
+
+    <!-- COUNTDOWN -->
+    <div class="countdown-card">
+      <div class="cd-eyebrow">⏱ Keyingi Yig'ilish</div>
+      <div id="cd-title" class="cd-title">Navbatdagi Umumiy Yig'ilish</div>
+      <div class="cd-blocks">
+        <div class="cd-block"><div id="cd-d" class="cd-num">00</div><div class="cd-lbl">Kun</div></div>
+        <div class="cd-block"><div id="cd-h" class="cd-num">00</div><div class="cd-lbl">Soat</div></div>
+        <div class="cd-block"><div id="cd-m" class="cd-num">00</div><div class="cd-lbl">Min</div></div>
+        <div class="cd-block"><div id="cd-s" class="cd-num">00</div><div class="cd-lbl">Sek</div></div>
+      </div>
+      <div class="cd-meta">
+        <div class="cd-meta-item">📍 <strong id="cd-loc">Urgut Markaziy Bog'i</strong></div>
+        <div class="cd-meta-item">🕕 <strong id="cd-time">Yakshanba, 06:30</strong></div>
+      </div>
     </div>
-    <div class="stat-tile w">
-      <div class="stat-value w">#1</div>
-      <div class="stat-label">⛰ Urgut</div>
+
+    <!-- TABS (ACTIVITY) -->
+    <div class="tabs-wrap">
+      <div class="tabs">
+        <button class="tab-btn active" data-activity="run"   onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
+        <button class="tab-btn"        data-activity="walk"  onclick="switchTab(this,'walk')">🚶‍♂️ Yurish</button>
+        <button class="tab-btn"        data-activity="cycle" onclick="switchTab(this,'cycle')">🚴‍♂️ Velosiped</button>
+      </div>
+    </div>
+
+    <!-- TIME FILTERS -->
+    <div class="time-filters-wrap">
+      <div class="time-tabs">
+        <button class="time-btn" data-time="weekly" onclick="switchTime(this, 'weekly')">Haftalik</button>
+        <button class="time-btn" data-time="monthly" onclick="switchTime(this, 'monthly')">Oylik</button>
+        <button class="time-btn" data-time="yearly" onclick="switchTime(this, 'yearly')">Yillik</button>
+        <button class="time-btn active" data-time="all" onclick="switchTime(this, 'all')">Umumiy</button>
+      </div>
+    </div>
+
+    <!-- PODIUM -->
+    <div class="podium-wrap" id="podium-wrap">
+      <div class="podium-label">🏆 Top 3</div>
+      <div class="podium-stage" id="podium-stage"></div>
+    </div>
+
+    <div class="section-div"></div>
+
+    <!-- LEADERBOARD -->
+    <div class="board-wrap">
+      <div class="board-header" id="board-label">Umumiy Natijalar</div>
+      <div class="board-list" id="board-list">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
     </div>
   </div>
 
-  <!-- COUNTDOWN -->
-  <div class="countdown-card">
-    <div class="cd-eyebrow">⏱ Keyingi Yig'ilish</div>
-    <div id="cd-title" class="cd-title">Navbatdagi Umumiy Yig'ilish</div>
-    <div class="cd-blocks">
-      <div class="cd-block"><div id="cd-d" class="cd-num">00</div><div class="cd-lbl">Kun</div></div>
-      <div class="cd-block"><div id="cd-h" class="cd-num">00</div><div class="cd-lbl">Soat</div></div>
-      <div class="cd-block"><div id="cd-m" class="cd-num">00</div><div class="cd-lbl">Min</div></div>
-      <div class="cd-block"><div id="cd-s" class="cd-num">00</div><div class="cd-lbl">Sek</div></div>
-    </div>
-    <div class="cd-meta">
-      <div class="cd-meta-item">📍 <strong id="cd-loc">Urgut Markaziy Bog'i</strong></div>
-      <div class="cd-meta-item">🕕 <strong id="cd-time">Yakshanba, 06:30</strong></div>
-    </div>
-  </div>
+  <!-- 2. VIEW: ROUTES (MARSHRUTLAR) -->
+  <div id="view-routes" class="view-section">
+    <div class="routes-wrap">
+      
+      <div class="route-card">
+        <div class="route-img">🌲<div class="route-badge">Yengil</div></div>
+        <div class="route-info">
+          <div class="route-title">Bog' Atrofi Marshruti</div>
+          <div class="route-desc">Urgut markaziy istirohat bog'i atrofida toza havodagi qulay yugurish yo'lagi. Yangi boshlovchilar uchun ayni muddao.</div>
+          <div class="route-meta"><span>📏 1.5 km (1 krug)</span><span>🏔 Tekislik</span></div>
+        </div>
+      </div>
 
-  <!-- TABS (ACTIVITY) -->
-  <div class="tabs-wrap">
-    <div class="tabs">
-      <button class="tab-btn active" data-activity="run"   onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
-      <button class="tab-btn"        data-activity="walk"  onclick="switchTab(this,'walk')">🚶‍♂️ Yurish</button>
-      <button class="tab-btn"        data-activity="cycle" onclick="switchTab(this,'cycle')">🚴‍♂️ Velosiped</button>
-    </div>
-  </div>
+      <div class="route-card">
+        <div class="route-img">⛰<div class="route-badge">O'rta</div></div>
+        <div class="route-info">
+          <div class="route-title">Tog' Yonbag'ri</div>
+          <div class="route-desc">Tog' havosi va biroz qiyaliklarga ega bo'lgan marshrut. O'pkani tozalash va chidamlilikni oshirish uchun ideal joy.</div>
+          <div class="route-meta"><span>📏 5.0 km</span><span>⬆️ Qiyalik: 45m</span></div>
+        </div>
+      </div>
 
-  <!-- TIME FILTERS (YANGI QO'SHILDI) -->
-  <div class="time-filters-wrap">
-    <div class="time-tabs">
-      <button class="time-btn" data-time="weekly" onclick="switchTime(this, 'weekly')">Haftalik</button>
-      <button class="time-btn" data-time="monthly" onclick="switchTime(this, 'monthly')">Oylik</button>
-      <button class="time-btn" data-time="yearly" onclick="switchTime(this, 'yearly')">Yillik</button>
-      <button class="time-btn active" data-time="all" onclick="switchTime(this, 'all')">Umumiy</button>
     </div>
   </div>
 
-  <!-- PODIUM -->
-  <div class="podium-wrap" id="podium-wrap">
-    <div class="podium-label">🏆 Top 3</div>
-    <div class="podium-stage" id="podium-stage"></div>
-  </div>
+  <!-- 3. VIEW: PROFILE (PROFILIM) -->
+  <div id="view-profile" class="view-section">
+    <div class="profile-wrap">
+      <div class="profile-avatar">🏃‍♂️</div>
+      <div class="profile-name" id="prof-name">Foydalanuvchi</div>
+      <div class="profile-id" id="prof-id">@urgut_run</div>
 
-  <div class="section-div"></div>
-
-  <!-- LEADERBOARD -->
-  <div class="board-wrap">
-    <div class="board-header" id="board-label">Umumiy Natijalar</div>
-    <div class="board-list" id="board-list">
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
+      <div class="coming-soon-card">
+        <div class="cs-icon">🎖</div>
+        <div class="cs-title">Yutuqlar va Maqsadlar</div>
+        <div class="cs-text">Tez kunda siz bu yerda o'z nishonlaringizni (badge), oylik shaxsiy maqsadingizni va batafsil statistikangizni ko'ra olasiz. Dasturchilar ishlamoqda... 🛠</div>
+      </div>
     </div>
   </div>
 
   <!-- FOOTER -->
   <div class="footer">© 2026 <span>Urgut Run Club</span> · Sport yangi avlod uchun</div>
+
+  <!-- BOTTOM NAVIGATION -->
+  <div class="bottom-nav">
+    <button class="nav-btn active" onclick="switchMainView(this, 'view-rating')">
+      <div class="nav-icon">🏆</div>Reyting
+      <div class="nav-indicator"></div>
+    </button>
+    <button class="nav-btn" onclick="switchMainView(this, 'view-routes')">
+      <div class="nav-icon">🗺</div>Marshrutlar
+      <div class="nav-indicator"></div>
+    </button>
+    <button class="nav-btn" onclick="switchMainView(this, 'view-profile')">
+      <div class="nav-icon">👤</div>Profil
+      <div class="nav-indicator"></div>
+    </button>
+  </div>
 
 </div><!-- /app -->
 
@@ -467,7 +435,7 @@
   const API = "https://urgutrunclub-bot.onrender.com";
   const TARGET = { run: 42, walk: 50, cycle: 100 };
   let currentTab = 'run';
-  let currentTime = 'all'; // YANGI QO'SHILDI
+  let currentTime = 'all';
   let eventDate  = null;
   let cdInterval = null;
 
@@ -476,6 +444,23 @@
     document.getElementById('splash').classList.add('hide');
     document.getElementById('app').classList.add('visible');
   }, 2000);
+
+  /* ── BOTTOM NAV LOGIC (YANGI) ── */
+  window.switchMainView = (btn, viewId) => {
+    // Tugmalarni aktiv holatini o'zgartirish
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    // Oynalarni almashtirish
+    document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+
+    // Agar profil oynasiga kirilsa, ismni Telegramdan olib qoyish
+    if(viewId === 'view-profile' && tg && tg.initDataUnsafe?.user) {
+      document.getElementById('prof-name').textContent = tg.initDataUnsafe.user.first_name || 'Foydalanuvchi';
+      document.getElementById('prof-id').textContent = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.id);
+    }
+  };
 
   /* ── EVENT / COUNTDOWN ── */
   async function fetchEvent() {
@@ -525,22 +510,15 @@
     loadLeaderboard();
   };
 
-  /* ── TIME FILTERS (YANGI QO'SHILDI) ── */
+  /* ── TIME FILTERS ── */
   window.switchTime = (btn, time) => {
     if (currentTime === time) return;
     document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentTime = time;
     
-    // Yozuvni chiroyli o'zgartirish
-    const labels = {
-      'weekly': 'Haftalik Natijalar',
-      'monthly': 'Oylik Natijalar',
-      'yearly': 'Yillik Natijalar',
-      'all': 'Umumiy Natijalar'
-    };
+    const labels = { 'weekly': 'Haftalik Natijalar', 'monthly': 'Oylik Natijalar', 'yearly': 'Yillik Natijalar', 'all': 'Umumiy Natijalar' };
     document.getElementById('board-label').textContent = labels[time];
-    
     loadLeaderboard();
   };
 
@@ -550,27 +528,15 @@
     const podiumWrap = document.getElementById('podium-wrap');
     const stage = document.getElementById('podium-stage');
 
-    // Skeleton shimmer
-    boardList.innerHTML = `
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-      <div class="skeleton"></div>
-    `;
+    boardList.innerHTML = `<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>`;
     podiumWrap.style.display = 'none';
 
     try {
-      // API'GA ?time SO'ROVINI QO'SHDIK
       const res  = await fetch(`${API}/api/leaderboard/${currentTab}?time=${currentTime}`);
       const data = await res.json();
 
       if (!data.success || !data.data?.length) {
-        boardList.innerHTML = `
-          <div class="state-box">
-            <div class="state-icon">📭</div>
-            <div class="state-text">Hozircha natijalar mavjud emas</div>
-          </div>`;
-        
-        // Jami statistikani 0 qilib ko'rsatish
+        boardList.innerHTML = `<div class="state-box"><div class="state-icon">📭</div><div class="state-text">Hozircha natijalar mavjud emas</div></div>`;
         document.getElementById('total-runners').textContent = 0;
         document.getElementById('total-distance').textContent = "0.0";
         return;
@@ -587,12 +553,7 @@
         const p = players[idx];
         if (!p) return `<div class="podium-card ${posClass[i]} empty"></div>`;
         const name = safeName(p.name);
-        return `
-          <div class="podium-card ${posClass[i]}">
-            <div class="podium-emoji">${medals[i]}</div>
-            <div class="podium-name">${name}</div>
-            <div class="podium-km">${p.distance} km</div>
-          </div>`;
+        return `<div class="podium-card ${posClass[i]}"><div class="podium-emoji">${medals[i]}</div><div class="podium-name">${name}</div><div class="podium-km">${p.distance} km</div></div>`;
       }).join('');
       podiumWrap.style.display = 'block';
 
@@ -607,52 +568,26 @@
 
         const row = document.createElement('div');
         row.className = `player-row ${topClass}`;
-        row.innerHTML = `
-          <div class="player-rank">${rankEl}</div>
-          <div class="player-info">
-            <div class="player-name-row">
-              <span class="player-name">${name}</span>${streak}
-            </div>
-            <div class="prog-track">
-              <div class="prog-fill" data-pct="${progress}"></div>
-            </div>
-          </div>
-          <div class="player-km">${p.distance} km</div>
-        `;
+        row.innerHTML = `<div class="player-rank">${rankEl}</div><div class="player-info"><div class="player-name-row"><span class="player-name">${name}</span>${streak}</div><div class="prog-track"><div class="prog-fill" data-pct="${progress}"></div></div></div><div class="player-km">${p.distance} km</div>`;
         boardList.appendChild(row);
       });
 
-      /* Animate progress bars with small delay */
-      requestAnimationFrame(() => {
-        boardList.querySelectorAll('.prog-fill').forEach(bar => {
-          setTimeout(() => {
-            bar.style.width = bar.dataset.pct + '%';
-          }, 80);
-        });
-      });
+      requestAnimationFrame(() => { boardList.querySelectorAll('.prog-fill').forEach(bar => { setTimeout(() => { bar.style.width = bar.dataset.pct + '%'; }, 80); }); });
 
-      /* Update stats */
       document.getElementById('total-runners').textContent  = players.length;
       const totalKm = players.reduce((s, p) => s + (parseFloat(p.distance) || 0), 0);
       document.getElementById('total-distance').textContent = totalKm.toFixed(1);
 
     } catch (e) {
-      boardList.innerHTML = `
-        <div class="state-box">
-          <div class="state-icon">⚡</div>
-          <div class="state-text">Server bilan aloqa yo'q</div>
-        </div>`;
+      boardList.innerHTML = `<div class="state-box"><div class="state-icon">⚡</div><div class="state-text">Server bilan aloqa yo'q</div></div>`;
     }
   }
 
-  function safeName(name) {
-    return (name && name !== 'null') ? name : 'Foydalanuvchi';
-  }
+  function safeName(name) { return (name && name !== 'null') ? name : 'Foydalanuvchi'; }
 
   /* ── BOOT ── */
   fetchEvent();
   loadLeaderboard();
-
 })();
 </script>
 </body>

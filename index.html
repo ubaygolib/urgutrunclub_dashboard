@@ -99,7 +99,6 @@
       padding: 28px 20px 0;
       display: flex; align-items: center; justify-content: space-between;
     }
-    .header-left {}
     .header-eyebrow {
       font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
       text-transform: uppercase; color: var(--cyan); margin-bottom: 4px;
@@ -187,7 +186,7 @@
     .cd-meta-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
     .cd-meta-item strong { color: var(--text); font-weight: 600; }
 
-    /* ── TABS ── */
+    /* ── ACTIVITY TABS ── */
     .tabs-wrap { padding: 18px 20px 0; }
     .tabs {
       display: flex;
@@ -213,6 +212,30 @@
       color: var(--cyan);
       border: 1px solid rgba(0,200,255,0.2);
       box-shadow: 0 2px 12px rgba(0,200,255,0.1);
+    }
+
+    /* ── TIME FILTERS (Yangi Qushilgan Joy) ── */
+    .time-filters-wrap { padding: 12px 20px 0; }
+    .time-tabs {
+      display: flex; gap: 6px;
+    }
+    .time-btn {
+      flex: 1;
+      background: var(--surface-2);
+      border: 1px solid rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .time-btn.active {
+      background: var(--surface);
+      color: var(--white);
+      border-color: rgba(255,255,255,0.15);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     /* ── PODIUM ── */
@@ -393,12 +416,22 @@
     </div>
   </div>
 
-  <!-- TABS -->
+  <!-- TABS (ACTIVITY) -->
   <div class="tabs-wrap">
     <div class="tabs">
       <button class="tab-btn active" data-activity="run"   onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
       <button class="tab-btn"        data-activity="walk"  onclick="switchTab(this,'walk')">🚶‍♂️ Yurish</button>
       <button class="tab-btn"        data-activity="cycle" onclick="switchTab(this,'cycle')">🚴‍♂️ Velosiped</button>
+    </div>
+  </div>
+
+  <!-- TIME FILTERS (YANGI QO'SHILDI) -->
+  <div class="time-filters-wrap">
+    <div class="time-tabs">
+      <button class="time-btn" data-time="weekly" onclick="switchTime(this, 'weekly')">Haftalik</button>
+      <button class="time-btn" data-time="monthly" onclick="switchTime(this, 'monthly')">Oylik</button>
+      <button class="time-btn" data-time="yearly" onclick="switchTime(this, 'yearly')">Yillik</button>
+      <button class="time-btn active" data-time="all" onclick="switchTime(this, 'all')">Umumiy</button>
     </div>
   </div>
 
@@ -434,6 +467,7 @@
   const API = "https://urgutrunclub-bot.onrender.com";
   const TARGET = { run: 42, walk: 50, cycle: 100 };
   let currentTab = 'run';
+  let currentTime = 'all'; // YANGI QO'SHILDI
   let eventDate  = null;
   let cdInterval = null;
 
@@ -482,12 +516,31 @@
     document.getElementById('cd-s').textContent = fmt(s);
   }
 
-  /* ── TABS ── */
+  /* ── ACTIVITY TABS ── */
   window.switchTab = (btn, activity) => {
     if (currentTab === activity) return;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentTab = activity;
+    loadLeaderboard();
+  };
+
+  /* ── TIME FILTERS (YANGI QO'SHILDI) ── */
+  window.switchTime = (btn, time) => {
+    if (currentTime === time) return;
+    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentTime = time;
+    
+    // Yozuvni chiroyli o'zgartirish
+    const labels = {
+      'weekly': 'Haftalik Natijalar',
+      'monthly': 'Oylik Natijalar',
+      'yearly': 'Yillik Natijalar',
+      'all': 'Umumiy Natijalar'
+    };
+    document.getElementById('board-label').textContent = labels[time];
+    
     loadLeaderboard();
   };
 
@@ -506,7 +559,8 @@
     podiumWrap.style.display = 'none';
 
     try {
-      const res  = await fetch(`${API}/api/leaderboard/${currentTab}`);
+      // API'GA ?time SO'ROVINI QO'SHDIK
+      const res  = await fetch(`${API}/api/leaderboard/${currentTab}?time=${currentTime}`);
       const data = await res.json();
 
       if (!data.success || !data.data?.length) {
@@ -515,6 +569,10 @@
             <div class="state-icon">📭</div>
             <div class="state-text">Hozircha natijalar mavjud emas</div>
           </div>`;
+        
+        // Jami statistikani 0 qilib ko'rsatish
+        document.getElementById('total-runners').textContent = 0;
+        document.getElementById('total-distance').textContent = "0.0";
         return;
       }
 

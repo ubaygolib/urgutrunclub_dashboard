@@ -49,7 +49,7 @@
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      padding-bottom: 90px; /* Pastki menyu ustini yopib qo'ymasligi uchun o'zgartirildi */
+      padding-bottom: 90px;
     }
 
     /* ── AMBIENT GLOW ── */
@@ -71,23 +71,11 @@
     }
     #splash.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
     .splash-logo { font-size: 52px; animation: logo-pulse 1.4s ease-in-out infinite; }
-    @keyframes logo-pulse {
-      0%,100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--cyan)); }
-      50%      { transform: scale(1.08); filter: drop-shadow(0 0 20px var(--cyan)); }
-    }
+    @keyframes logo-pulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--cyan)); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 20px var(--cyan)); } }
     .splash-wordmark { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: var(--white); }
     .splash-wordmark span { color: var(--cyan); }
-    .splash-bar {
-      width: 160px; height: 3px;
-      background: var(--surface-2);
-      border-radius: 99px; overflow: hidden;
-    }
-    .splash-fill {
-      height: 100%; width: 0%;
-      background: linear-gradient(90deg, var(--cyan), var(--red));
-      border-radius: 99px;
-      animation: splash-load 1.8s ease forwards;
-    }
+    .splash-bar { width: 160px; height: 3px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
+    .splash-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--red)); border-radius: 99px; animation: splash-load 1.8s ease forwards; }
     @keyframes splash-load { to { width: 100%; } }
 
     /* ── MAIN CONTENT ── */
@@ -95,107 +83,29 @@
     #app.visible { opacity: 1; }
 
     /* ── HEADER ── */
-    .header {
-      padding: 28px 20px 0;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .header-eyebrow {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--cyan); margin-bottom: 4px;
-    }
-    .header-title {
-      font-size: 27px; font-weight: 900; letter-spacing: -0.5px;
-      line-height: 1.1; color: var(--white);
-    }
+    .header { padding: 28px 20px 0; display: flex; align-items: center; justify-content: space-between; }
+    .header-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
+    .header-title { font-size: 27px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.1; color: var(--white); }
     .header-title em { font-style: normal; color: var(--cyan); }
-    .live-badge {
-      display: flex; align-items: center; gap: 6px;
-      background: var(--red-dim);
-      border: 1px solid rgba(255,61,61,0.25);
-      border-radius: 99px;
-      padding: 6px 12px;
-      font-size: 12px; font-weight: 700; color: var(--red);
-    }
-    .live-dot {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--red);
-      animation: live-blink 1.2s ease-in-out infinite;
-    }
-    @keyframes live-blink {
-      0%,100% { opacity: 1; box-shadow: 0 0 6px var(--red); }
-      50%      { opacity: 0.3; box-shadow: none; }
-    }
+    .live-badge { display: flex; align-items: center; gap: 6px; background: var(--red-dim); border: 1px solid rgba(255,61,61,0.25); border-radius: 99px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--red); }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: live-blink 1.2s ease-in-out infinite; }
+    @keyframes live-blink { 0%,100% { opacity: 1; box-shadow: 0 0 6px var(--red); } 50% { opacity: 0.3; box-shadow: none; } }
 
-    /* ── MULTI-VIEW SYSTEM (YANGI QO'SHILDI) ── */
+    /* ── VIEWS ── */
     .view-section { display: none; animation: fadeIn 0.4s ease; }
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ── BOTTOM NAVIGATION (YANGI QO'SHILDI) ── */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: rgba(15, 21, 32, 0.95);
-      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-      border-top: 1px solid rgba(255,255,255,0.05);
-      display: flex; justify-content: space-around;
-      padding: 12px 10px 24px; /* Mobile safe area uchun pastdan joy */
-      z-index: 100;
-    }
-    .nav-btn {
-      background: none; border: none; outline: none;
-      color: var(--text-muted);
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
-      cursor: pointer; transition: 0.3s; flex: 1;
-    }
+    /* ── BOTTOM NAV ── */
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 21, 32, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; padding: 12px 10px 24px; z-index: 100; }
+    .nav-btn { background: none; border: none; outline: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: 0.3s; flex: 1; }
     .nav-btn.active { color: var(--cyan); }
     .nav-icon { font-size: 22px; margin-bottom: 2px; transition: 0.3s; }
     .nav-btn.active .nav-icon { transform: translateY(-3px) scale(1.1); filter: drop-shadow(0 4px 8px rgba(0, 200, 255, 0.4)); }
     .nav-indicator { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); opacity: 0; transition: 0.3s; transform: translateY(5px); }
     .nav-btn.active .nav-indicator { opacity: 1; transform: translateY(0); }
 
-
-    /* ── VIEWS STYLES: ROUTES & PROFILE (YANGI) ── */
-    .routes-wrap, .profile-wrap { padding: 20px; }
-    
-    .route-card {
-      background: var(--bg-card); border-radius: var(--radius);
-      border: 1px solid rgba(255,255,255,0.04);
-      margin-bottom: 16px; overflow: hidden; position: relative;
-    }
-    .route-img {
-      height: 120px; background: linear-gradient(45deg, var(--surface), var(--surface-2));
-      display: flex; align-items: center; justify-content: center; font-size: 30px;
-    }
-    .route-badge {
-      position: absolute; top: 12px; right: 12px;
-      background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
-      padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; color: var(--white);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .route-info { padding: 16px; }
-    .route-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
-    .route-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
-    .route-meta { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--cyan); }
-
-    .profile-avatar {
-      width: 80px; height: 80px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--cyan), var(--red));
-      margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;
-      font-size: 32px; border: 3px solid var(--bg); outline: 2px solid var(--cyan-glow);
-    }
-    .profile-name { font-size: 20px; font-weight: 800; color: var(--white); margin-bottom: 4px; text-align: center; }
-    .profile-id { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; text-align: center; }
-    .coming-soon-card {
-      background: linear-gradient(135deg, rgba(0,200,255,0.05), rgba(255,61,61,0.05));
-      border: 1px dashed rgba(0,200,255,0.3); border-radius: var(--radius); padding: 24px; text-align: center;
-    }
-    .cs-icon { font-size: 32px; margin-bottom: 12px; }
-    .cs-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 8px; }
-    .cs-text { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-
-
-    /* ── ORIGINAL RATING VIEW CSS ── */
+    /* ── RATING VIEW (CSS QISQARTIRILGAN) ── */
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 20px 0; }
     .stat-tile { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: var(--radius); padding: 14px 10px; text-align: center; position: relative; overflow: hidden; transition: transform 0.2s; }
     .stat-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
@@ -207,7 +117,6 @@
     .stat-value.r { color: var(--red); }
     .stat-value.w { color: var(--white); }
     .stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
-
     .countdown-card { margin: 18px 20px 0; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid rgba(0,200,255,0.1); padding: 18px 18px 16px; position: relative; overflow: hidden; }
     .countdown-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--cyan), var(--red)); }
     .cd-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
@@ -218,18 +127,14 @@
     .cd-lbl { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
     .cd-meta { display: flex; gap: 14px; margin-top: 12px; }
     .cd-meta-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
-    .cd-meta-item strong { color: var(--text); font-weight: 600; }
-
     .tabs-wrap { padding: 18px 20px 0; }
     .tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 4px; gap: 4px; border: 1px solid rgba(255,255,255,0.04); }
     .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); padding: 11px 6px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.22s; white-space: nowrap; }
     .tab-btn.active { background: linear-gradient(135deg, var(--cyan-dim), rgba(255,61,61,0.08)); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); box-shadow: 0 2px 12px rgba(0,200,255,0.1); }
-
     .time-filters-wrap { padding: 12px 20px 0; }
     .time-tabs { display: flex; gap: 6px; }
     .time-btn { flex: 1; background: var(--surface-2); border: 1px solid rgba(255,255,255,0.04); color: var(--text-muted); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
     .time-btn.active { background: var(--surface); color: var(--white); border-color: rgba(255,255,255,0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
-
     .podium-wrap { padding: 18px 20px 0; display: none; }
     .podium-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
     .podium-stage { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 148px; }
@@ -243,13 +148,10 @@
     .podium-name { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 3px; }
     .podium-km { font-size: 14px; font-weight: 900; color: var(--cyan); }
     .podium-card.pos-1 .podium-km { color: var(--gold); }
-
     .board-wrap { padding: 14px 20px 0; }
     .board-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
     .board-list { display: flex; flex-direction: column; gap: 9px; }
-
     .player-row { background: var(--bg-card); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; transition: transform 0.18s, box-shadow 0.18s; }
-    .player-row:active { transform: scale(0.98); }
     .player-row.top1 { border-color: rgba(255,215,0,0.18); background: linear-gradient(135deg, rgba(255,215,0,0.05), var(--bg-card)); }
     .player-row.top2 { border-color: rgba(184,200,216,0.14); }
     .player-row.top3 { border-color: rgba(205,140,80,0.14); }
@@ -264,14 +166,49 @@
     .player-row.top1 .prog-fill { background: linear-gradient(90deg, var(--gold), #FFA500); }
     .player-km { font-size: 16px; font-weight: 900; color: var(--cyan); min-width: 52px; text-align: right; }
     .player-row.top1 .player-km { color: var(--gold); }
-
     .state-box { text-align: center; padding: 48px 20px; color: var(--text-muted); }
     .state-icon { font-size: 32px; margin-bottom: 12px; }
     .state-text { font-size: 14px; font-weight: 600; }
-    
     @keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
     .skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); height: 66px; }
     
+    /* ── ROUTES VIEW ── */
+    .routes-wrap { padding: 20px; }
+    .route-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 16px; overflow: hidden; position: relative; }
+    .route-img { height: 120px; background: linear-gradient(45deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+    .route-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; color: var(--white); border: 1px solid rgba(255,255,255,0.1); }
+    .route-info { padding: 16px; }
+    .route-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
+    .route-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+    .route-meta { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--cyan); }
+
+    /* ── PROFILE VIEW (YANGI OYNA) ── */
+    .profile-wrap { padding: 20px; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--red)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 3px solid var(--bg); outline: 2px solid var(--cyan-glow); }
+    .profile-name { font-size: 20px; font-weight: 800; color: var(--white); margin-bottom: 4px; text-align: center; }
+    .profile-id { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; text-align: center; }
+    
+    .prof-stats-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 20px; padding: 16px; }
+    .prof-stat-row { display: flex; justify-content: space-around; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .prof-stat-item { text-align: center; }
+    .prof-stat-val { font-size: 22px; font-weight: 900; color: var(--cyan); margin-bottom: 4px; }
+    .prof-stat-lbl { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    
+    .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .goal-title { font-size: 13px; font-weight: 800; color: var(--white); }
+    .goal-text { font-size: 13px; font-weight: 800; color: var(--cyan); }
+    .goal-track { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
+    .goal-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .goal-desc { font-size: 11px; color: var(--text-muted); text-align: center; }
+
+    .badges-wrap { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); padding: 16px; }
+    .badges-title { font-size: 13px; font-weight: 800; color: var(--white); margin-bottom: 14px; text-align: center;}
+    .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .badge-item { background: var(--surface); border-radius: 12px; padding: 12px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.2s;}
+    .badge-item:active { transform: scale(0.95); }
+    .badge-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+    .badge-name { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
+
     .section-div { height: 1px; background: rgba(255,255,255,0.04); margin: 20px 20px 0; }
     .footer { text-align: center; padding: 28px 20px 0; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
     .footer span { color: var(--cyan); font-weight: 700; }
@@ -293,7 +230,7 @@
 <!-- ── APP ── -->
 <div id="app">
 
-  <!-- HEADER (Hamma oynada ko'rinib turadi) -->
+  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <div class="header-eyebrow">Sportiv Portal 2026</div>
@@ -302,16 +239,14 @@
     <div class="live-badge"><div class="live-dot"></div>JONLI</div>
   </div>
 
-  <!-- 1. VIEW: RATING (ASOSIY OYNA) -->
+  <!-- 1. VIEW: RATING -->
   <div id="view-rating" class="view-section active">
-    <!-- STATS -->
     <div class="stats-row">
       <div class="stat-tile c"><div id="total-runners" class="stat-value c">—</div><div class="stat-label">🏃 Faollar</div></div>
       <div class="stat-tile r"><div id="total-distance" class="stat-value r">—</div><div class="stat-label">🏁 Jami km</div></div>
       <div class="stat-tile w"><div class="stat-value w">#1</div><div class="stat-label">⛰ Urgut</div></div>
     </div>
 
-    <!-- COUNTDOWN -->
     <div class="countdown-card">
       <div class="cd-eyebrow">⏱ Keyingi Yig'ilish</div>
       <div id="cd-title" class="cd-title">Navbatdagi Umumiy Yig'ilish</div>
@@ -327,7 +262,6 @@
       </div>
     </div>
 
-    <!-- TABS (ACTIVITY) -->
     <div class="tabs-wrap">
       <div class="tabs">
         <button class="tab-btn active" data-activity="run"   onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
@@ -336,7 +270,6 @@
       </div>
     </div>
 
-    <!-- TIME FILTERS -->
     <div class="time-filters-wrap">
       <div class="time-tabs">
         <button class="time-btn" data-time="weekly" onclick="switchTime(this, 'weekly')">Haftalik</button>
@@ -346,29 +279,22 @@
       </div>
     </div>
 
-    <!-- PODIUM -->
     <div class="podium-wrap" id="podium-wrap">
       <div class="podium-label">🏆 Top 3</div>
       <div class="podium-stage" id="podium-stage"></div>
     </div>
-
     <div class="section-div"></div>
-
-    <!-- LEADERBOARD -->
     <div class="board-wrap">
       <div class="board-header" id="board-label">Umumiy Natijalar</div>
       <div class="board-list" id="board-list">
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
-        <div class="skeleton"></div>
+        <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
       </div>
     </div>
   </div>
 
-  <!-- 2. VIEW: ROUTES (MARSHRUTLAR) -->
+  <!-- 2. VIEW: ROUTES -->
   <div id="view-routes" class="view-section">
     <div class="routes-wrap">
-      
       <div class="route-card">
         <div class="route-img">🌲<div class="route-badge">Yengil</div></div>
         <div class="route-info">
@@ -377,7 +303,6 @@
           <div class="route-meta"><span>📏 1.5 km (1 krug)</span><span>🏔 Tekislik</span></div>
         </div>
       </div>
-
       <div class="route-card">
         <div class="route-img">⛰<div class="route-badge">O'rta</div></div>
         <div class="route-info">
@@ -386,22 +311,49 @@
           <div class="route-meta"><span>📏 5.0 km</span><span>⬆️ Qiyalik: 45m</span></div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <!-- 3. VIEW: PROFILE (PROFILIM) -->
+  <!-- 3. VIEW: PROFILE (YANGILANGAN QISM) -->
   <div id="view-profile" class="view-section">
     <div class="profile-wrap">
       <div class="profile-avatar">🏃‍♂️</div>
-      <div class="profile-name" id="prof-name">Foydalanuvchi</div>
+      <div class="profile-name" id="prof-name">Yuklanmoqda...</div>
       <div class="profile-id" id="prof-id">@urgut_run</div>
 
-      <div class="coming-soon-card">
-        <div class="cs-icon">🎖</div>
-        <div class="cs-title">Yutuqlar va Maqsadlar</div>
-        <div class="cs-text">Tez kunda siz bu yerda o'z nishonlaringizni (badge), oylik shaxsiy maqsadingizni va batafsil statistikangizni ko'ra olasiz. Dasturchilar ishlamoqda... 🛠</div>
+      <!-- Oylik Maqsad va Statistika -->
+      <div class="prof-stats-card">
+        <div class="prof-stat-row">
+          <div class="prof-stat-item">
+            <div class="prof-stat-val" id="prof-total-km">0.0</div>
+            <div class="prof-stat-lbl">Jami (km)</div>
+          </div>
+          <div class="prof-stat-item">
+            <div class="prof-stat-val" id="prof-strike">0</div>
+            <div class="prof-stat-lbl">🔥 Streak (kun)</div>
+          </div>
+        </div>
+
+        <div class="goal-section">
+          <div class="goal-header">
+            <span class="goal-title">🎯 Oylik Maqsad</span>
+            <span class="goal-text"><span id="prof-month-km">0</span> / <span id="prof-goal-km">0</span> km</span>
+          </div>
+          <div class="goal-track">
+            <div class="goal-fill" id="prof-goal-fill" style="width: 0%;"></div>
+          </div>
+          <div class="goal-desc" id="prof-goal-desc">Yuklanmoqda...</div>
+        </div>
       </div>
+
+      <!-- Nishonlar (Badges) -->
+      <div class="badges-wrap">
+        <div class="badges-title">🏅 Yutuqlar va Nishonlar</div>
+        <div class="badges-grid" id="prof-badges">
+           <!-- JavaScript yordamida bazadan olinadi -->
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -428,7 +380,6 @@
 
 <script>
 (() => {
-  /* ── TELEGRAM INIT ── */
   const tg = window.Telegram?.WebApp;
   if (tg) { tg.expand(); tg.setHeaderColor?.('#080B10'); tg.setBackgroundColor?.('#080B10'); }
 
@@ -439,30 +390,75 @@
   let eventDate  = null;
   let cdInterval = null;
 
-  /* ── SPLASH → APP ── */
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
     document.getElementById('app').classList.add('visible');
   }, 2000);
 
-  /* ── BOTTOM NAV LOGIC (YANGI) ── */
   window.switchMainView = (btn, viewId) => {
-    // Tugmalarni aktiv holatini o'zgartirish
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-
-    // Oynalarni almashtirish
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
 
-    // Agar profil oynasiga kirilsa, ismni Telegramdan olib qoyish
-    if(viewId === 'view-profile' && tg && tg.initDataUnsafe?.user) {
-      document.getElementById('prof-name').textContent = tg.initDataUnsafe.user.first_name || 'Foydalanuvchi';
-      document.getElementById('prof-id').textContent = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.id);
+    // Agar profil ochilsa, ma'lumotlarni tortamiz
+    if(viewId === 'view-profile') {
+      loadProfileData();
     }
   };
 
-  /* ── EVENT / COUNTDOWN ── */
+  /* ── YANGI FUNKSIYA: BAZADAN PROFILNI YUKLASH ── */
+  async function loadProfileData() {
+    let userId = 123456789; // Telegram o'chirilgan bo'lsa default ID
+    if(tg && tg.initDataUnsafe?.user) {
+      userId = tg.initDataUnsafe.user.id;
+      document.getElementById('prof-name').textContent = tg.initDataUnsafe.user.first_name || 'Foydalanuvchi';
+      document.getElementById('prof-id').textContent = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.id);
+    } else {
+      document.getElementById('prof-name').textContent = 'Test Foydalanuvchi';
+    }
+
+    try {
+      const res = await fetch(`${API}/api/profile/${userId}`);
+      const json = await res.json();
+      
+      if(json.success) {
+        const d = json.data;
+        document.getElementById('prof-total-km').textContent = d.total_km;
+        document.getElementById('prof-strike').textContent = d.strike;
+        document.getElementById('prof-month-km').textContent = d.month_km;
+        document.getElementById('prof-goal-km').textContent = d.goal;
+        
+        // Progress bar mantiqi
+        let pct = 0;
+        if(d.goal > 0) {
+          pct = Math.min((d.month_km / d.goal) * 100, 100);
+          document.getElementById('prof-goal-desc').textContent = pct >= 100 ? "🎉 Oylik maqsadga erishdingiz!" : "Olg'a! Maqsad sari harakat qiling.";
+        } else {
+          document.getElementById('prof-goal-desc').textContent = "Maqsad kiritish uchun botga /goal 50 deb yozing";
+        }
+        
+        setTimeout(() => {
+          document.getElementById('prof-goal-fill').style.width = pct + '%';
+        }, 100);
+
+        // Medallar mantiqi
+        let badges = '';
+        if(d.total_km >= 10) badges += `<div class="badge-item"><div class="badge-icon">🏃‍♂️</div><div class="badge-name">Boshlang'ich</div></div>`;
+        if(d.total_km >= 50) badges += `<div class="badge-item"><div class="badge-icon">🐆</div><div class="badge-name">Urgut Qoploni</div></div>`;
+        if(d.total_km >= 100) badges += `<div class="badge-item"><div class="badge-icon">🏔</div><div class="badge-name">Tog' Qahramoni</div></div>`;
+        if(d.strike >= 7) badges += `<div class="badge-item"><div class="badge-icon">🛡</div><div class="badge-name">Temir Iroda</div></div>`;
+        if(d.strike >= 30) badges += `<div class="badge-item"><div class="badge-icon">🔥</div><div class="badge-name">Afsona</div></div>`;
+        
+        if(badges === '') badges = `<div style="color:var(--text-muted); font-size:12px; grid-column:span 3; text-align:center;">Hali nishonlar yo'q. Natija kiritib nishonlarga ega bo'ling!</div>`;
+        
+        document.getElementById('prof-badges').innerHTML = badges;
+      }
+    } catch(e) {
+      console.error("Profile load error", e);
+    }
+  }
+
   async function fetchEvent() {
     try {
       const res  = await fetch(`${API}/api/get_event`);
@@ -473,7 +469,7 @@
         if (data.location)  document.getElementById('cd-loc').textContent   = data.location;
         if (data.time_text) document.getElementById('cd-time').textContent  = data.time_text;
       }
-    } catch (e) { console.warn('Event fetch failed', e); }
+    } catch (e) { console.warn('Event fetch failed'); }
     startCountdown();
   }
 
@@ -490,18 +486,13 @@
       ['d','h','m','s'].forEach(k => { document.getElementById(`cd-${k}`).textContent = '00'; });
       return;
     }
-    const d = Math.floor(diff / 86400000);
-    const h = Math.floor((diff % 86400000) / 3600000);
-    const m = Math.floor((diff % 3600000)  / 60000);
-    const s = Math.floor((diff % 60000)    / 1000);
     const fmt = n => String(n).padStart(2,'0');
-    document.getElementById('cd-d').textContent = fmt(d);
-    document.getElementById('cd-h').textContent = fmt(h);
-    document.getElementById('cd-m').textContent = fmt(m);
-    document.getElementById('cd-s').textContent = fmt(s);
+    document.getElementById('cd-d').textContent = fmt(Math.floor(diff / 86400000));
+    document.getElementById('cd-h').textContent = fmt(Math.floor((diff % 86400000) / 3600000));
+    document.getElementById('cd-m').textContent = fmt(Math.floor((diff % 3600000)  / 60000));
+    document.getElementById('cd-s').textContent = fmt(Math.floor((diff % 60000)    / 1000));
   }
 
-  /* ── ACTIVITY TABS ── */
   window.switchTab = (btn, activity) => {
     if (currentTab === activity) return;
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -510,19 +501,16 @@
     loadLeaderboard();
   };
 
-  /* ── TIME FILTERS ── */
   window.switchTime = (btn, time) => {
     if (currentTime === time) return;
     document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     currentTime = time;
-    
     const labels = { 'weekly': 'Haftalik Natijalar', 'monthly': 'Oylik Natijalar', 'yearly': 'Yillik Natijalar', 'all': 'Umumiy Natijalar' };
     document.getElementById('board-label').textContent = labels[time];
     loadLeaderboard();
   };
 
-  /* ── LEADERBOARD ── */
   async function loadLeaderboard() {
     const boardList = document.getElementById('board-list');
     const podiumWrap = document.getElementById('podium-wrap');
@@ -545,22 +533,20 @@
       const players = data.data;
       const target  = TARGET[currentTab];
 
-      /* Podium */
       const podiumOrder = [1, 0, 2];
       const medals = ['🥈','🥇','🥉'];
       const posClass = ['pos-2','pos-1','pos-3'];
       stage.innerHTML = podiumOrder.map((idx, i) => {
         const p = players[idx];
         if (!p) return `<div class="podium-card ${posClass[i]} empty"></div>`;
-        const name = safeName(p.name);
+        const name = (p.name && p.name !== 'null') ? p.name : 'Foydalanuvchi';
         return `<div class="podium-card ${posClass[i]}"><div class="podium-emoji">${medals[i]}</div><div class="podium-name">${name}</div><div class="podium-km">${p.distance} km</div></div>`;
       }).join('');
       podiumWrap.style.display = 'block';
 
-      /* List */
       boardList.innerHTML = '';
       players.forEach((p, idx) => {
-        const name     = safeName(p.name);
+        const name     = (p.name && p.name !== 'null') ? p.name : 'Foydalanuvchi';
         const progress = Math.min((p.distance / target) * 100, 100);
         const rankEl   = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span class="num">${idx+1}</span>`;
         const topClass = idx === 0 ? 'top1' : idx === 1 ? 'top2' : idx === 2 ? 'top3' : '';
@@ -583,9 +569,6 @@
     }
   }
 
-  function safeName(name) { return (name && name !== 'null') ? name : 'Foydalanuvchi'; }
-
-  /* ── BOOT ── */
   fetchEvent();
   loadLeaderboard();
 })();

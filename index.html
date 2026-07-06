@@ -6,71 +6,39 @@
   <title>Urgut Run Club</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    /* ═══════════════════════════════════
-       TOKENS — URC Brand System
-       Logodagi ranglar: qora, oq, cyan (#00C8FF), qizil (#FF3D3D)
-    ═══════════════════════════════════ */
     :root {
       --bg:           #080B10;
       --bg-card:      #0F1520;
-      --bg-glass:     rgba(15, 21, 32, 0.85);
       --surface:      #141C2A;
       --surface-2:    #1C2638;
-
       --cyan:         #00C8FF;
       --cyan-dim:     rgba(0, 200, 255, 0.12);
       --cyan-glow:    rgba(0, 200, 255, 0.35);
       --red:          #FF3D3D;
       --red-dim:      rgba(255, 61, 61, 0.12);
-      --red-glow:     rgba(255, 61, 61, 0.35);
-
       --white:        #FFFFFF;
       --text:         #E8F0F8;
       --text-muted:   #6B7FA0;
       --text-dim:     #3A4A62;
-
       --gold:         #FFD700;
       --silver:       #B8C8D8;
       --bronze:       #CD8C50;
-
       --radius-sm:    10px;
       --radius:       16px;
       --radius-lg:    22px;
     }
 
-    /* ── RESET ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     ::-webkit-scrollbar { width: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; padding-bottom: 90px; }
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      padding-bottom: 90px;
-    }
-
-    /* ── AMBIENT GLOW ── */
-    .ambient {
-      position: fixed; pointer-events: none; z-index: 0;
-      border-radius: 50%; filter: blur(100px);
-    }
+    .ambient { position: fixed; pointer-events: none; z-index: 0; border-radius: 50%; filter: blur(100px); }
     .ambient-1 { width: 400px; height: 400px; background: rgba(0,200,255,0.06); top: -120px; right: -100px; }
     .ambient-2 { width: 300px; height: 300px; background: rgba(255,61,61,0.05); bottom: 200px; left: -80px; }
 
-    /* ── SPLASH SCREEN ── */
-    #splash {
-      position: fixed; inset: 0; z-index: 999;
-      background: var(--bg);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      gap: 24px;
-      transition: opacity 0.6s ease, transform 0.6s ease;
-    }
+    #splash { position: fixed; inset: 0; z-index: 999; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; transition: opacity 0.6s ease, transform 0.6s ease; }
     #splash.hide { opacity: 0; transform: scale(1.04); pointer-events: none; }
-    .splash-logo { font-size: 52px; animation: logo-pulse 1.4s ease-in-out infinite; }
+    .splash-logo { font-size: 52px; animation: logo-pulse 1.4s infinite; }
     @keyframes logo-pulse { 0%,100% { transform: scale(1); filter: drop-shadow(0 0 0px var(--cyan)); } 50% { transform: scale(1.08); filter: drop-shadow(0 0 20px var(--cyan)); } }
     .splash-wordmark { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: var(--white); }
     .splash-wordmark span { color: var(--cyan); }
@@ -78,25 +46,21 @@
     .splash-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--red)); border-radius: 99px; animation: splash-load 1.8s ease forwards; }
     @keyframes splash-load { to { width: 100%; } }
 
-    /* ── MAIN CONTENT ── */
     #app { position: relative; z-index: 1; opacity: 0; transition: opacity 0.5s ease; }
     #app.visible { opacity: 1; }
 
-    /* ── HEADER ── */
     .header { padding: 28px 20px 0; display: flex; align-items: center; justify-content: space-between; }
     .header-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
     .header-title { font-size: 27px; font-weight: 900; letter-spacing: -0.5px; line-height: 1.1; color: var(--white); }
     .header-title em { font-style: normal; color: var(--cyan); }
     .live-badge { display: flex; align-items: center; gap: 6px; background: var(--red-dim); border: 1px solid rgba(255,61,61,0.25); border-radius: 99px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: var(--red); }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: live-blink 1.2s ease-in-out infinite; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: live-blink 1.2s infinite; }
     @keyframes live-blink { 0%,100% { opacity: 1; box-shadow: 0 0 6px var(--red); } 50% { opacity: 0.3; box-shadow: none; } }
 
-    /* ── VIEWS ── */
     .view-section { display: none; animation: fadeIn 0.4s ease; }
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* ── BOTTOM NAV ── */
     .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(15, 21, 32, 0.95); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; padding: 12px 10px 24px; z-index: 100; }
     .nav-btn { background: none; border: none; outline: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; letter-spacing: 0.05em; cursor: pointer; transition: 0.3s; flex: 1; }
     .nav-btn.active { color: var(--cyan); }
@@ -105,9 +69,9 @@
     .nav-indicator { width: 4px; height: 4px; border-radius: 50%; background: var(--cyan); opacity: 0; transition: 0.3s; transform: translateY(5px); }
     .nav-btn.active .nav-indicator { opacity: 1; transform: translateY(0); }
 
-    /* ── RATING VIEW (CSS QISQARTIRILGAN) ── */
+    /* RATING VIEW */
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 20px 20px 0; }
-    .stat-tile { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: var(--radius); padding: 14px 10px; text-align: center; position: relative; overflow: hidden; transition: transform 0.2s; }
+    .stat-tile { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.04); border-radius: var(--radius); padding: 14px 10px; text-align: center; position: relative; overflow: hidden; }
     .stat-tile::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
     .stat-tile.c::before { background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
     .stat-tile.r::before { background: linear-gradient(90deg, transparent, var(--red), transparent); }
@@ -116,42 +80,41 @@
     .stat-value.c { color: var(--cyan); }
     .stat-value.r { color: var(--red); }
     .stat-value.w { color: var(--white); }
-    .stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 3px; }
+    .stat-label { font-size: 10px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 3px; }
     .countdown-card { margin: 18px 20px 0; background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid rgba(0,200,255,0.1); padding: 18px 18px 16px; position: relative; overflow: hidden; }
     .countdown-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, var(--cyan), var(--red)); }
-    .cd-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+    .cd-eyebrow { font-size: 11px; font-weight: 700; color: var(--cyan); margin-bottom: 8px; }
     .cd-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
     .cd-blocks { display: flex; gap: 8px; }
     .cd-block { flex: 1; background: var(--surface); border-radius: var(--radius-sm); padding: 8px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.04); }
-    .cd-num { font-size: 22px; font-weight: 900; color: var(--white); line-height: 1; font-variant-numeric: tabular-nums; }
-    .cd-lbl { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+    .cd-num { font-size: 22px; font-weight: 900; color: var(--white); line-height: 1; }
+    .cd-lbl { font-size: 9px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-top: 2px; }
     .cd-meta { display: flex; gap: 14px; margin-top: 12px; }
     .cd-meta-item { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
     .tabs-wrap { padding: 18px 20px 0; }
     .tabs { display: flex; background: var(--surface); border-radius: var(--radius); padding: 4px; gap: 4px; border: 1px solid rgba(255,255,255,0.04); }
-    .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); padding: 11px 6px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.22s; white-space: nowrap; }
-    .tab-btn.active { background: linear-gradient(135deg, var(--cyan-dim), rgba(255,61,61,0.08)); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); box-shadow: 0 2px 12px rgba(0,200,255,0.1); }
+    .tab-btn { flex: 1; background: none; border: none; color: var(--text-muted); padding: 11px 6px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 12px; transition: all 0.22s; }
+    .tab-btn.active { background: linear-gradient(135deg, var(--cyan-dim), rgba(255,61,61,0.08)); color: var(--cyan); border: 1px solid rgba(0,200,255,0.2); }
     .time-filters-wrap { padding: 12px 20px 0; }
     .time-tabs { display: flex; gap: 6px; }
     .time-btn { flex: 1; background: var(--surface-2); border: 1px solid rgba(255,255,255,0.04); color: var(--text-muted); padding: 8px 4px; border-radius: 8px; font-size: 11px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-    .time-btn.active { background: var(--surface); color: var(--white); border-color: rgba(255,255,255,0.15); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    .time-btn.active { background: var(--surface); color: var(--white); border-color: rgba(255,255,255,0.15); }
     .podium-wrap { padding: 18px 20px 0; display: none; }
-    .podium-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+    .podium-label { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;}
     .podium-stage { display: flex; align-items: flex-end; justify-content: center; gap: 10px; height: 148px; }
     .podium-card { flex: 1; background: var(--bg-card); border-radius: var(--radius) var(--radius) 0 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding: 10px 6px 14px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.04); border-bottom: none; }
     .podium-card.pos-1 { height: 100%; border-top: 2px solid var(--gold); }
     .podium-card.pos-2 { height: 82%; border-top: 2px solid var(--silver); }
     .podium-card.pos-3 { height: 70%; border-top: 2px solid var(--bronze); }
     .podium-card.empty { border-top: 2px dashed var(--surface-2); opacity: 0.35; }
-    .podium-card.pos-1::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at top, rgba(255,215,0,0.06) 0%, transparent 70%); }
     .podium-emoji { font-size: 22px; margin-bottom: 4px; }
     .podium-name { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; margin-bottom: 3px; }
     .podium-km { font-size: 14px; font-weight: 900; color: var(--cyan); }
     .podium-card.pos-1 .podium-km { color: var(--gold); }
     .board-wrap { padding: 14px 20px 0; }
-    .board-header { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 12px; }
+    .board-header { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; text-transform: uppercase;}
     .board-list { display: flex; flex-direction: column; gap: 9px; }
-    .player-row { background: var(--bg-card); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; transition: transform 0.18s, box-shadow 0.18s; }
+    .player-row { background: var(--bg-card); border-radius: var(--radius); padding: 13px 14px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03); position: relative; overflow: hidden; transition: transform 0.18s; }
     .player-row.top1 { border-color: rgba(255,215,0,0.18); background: linear-gradient(135deg, rgba(255,215,0,0.05), var(--bg-card)); }
     .player-row.top2 { border-color: rgba(184,200,216,0.14); }
     .player-row.top3 { border-color: rgba(205,140,80,0.14); }
@@ -162,7 +125,7 @@
     .player-name { font-size: 15px; font-weight: 700; color: var(--text); }
     .fire-badge { background: rgba(255,152,0,0.14); color: #FF9800; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
     .prog-track { height: 4px; background: var(--surface-2); border-radius: 99px; overflow: hidden; }
-    .prog-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+    .prog-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 0.8s; }
     .player-row.top1 .prog-fill { background: linear-gradient(90deg, var(--gold), #FFA500); }
     .player-km { font-size: 16px; font-weight: 900; color: var(--cyan); min-width: 52px; text-align: right; }
     .player-row.top1 .player-km { color: var(--gold); }
@@ -172,40 +135,45 @@
     @keyframes shimmer { from { background-position: -400px 0; } to { background-position: 400px 0; } }
     .skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); height: 66px; }
     
-    /* ── ROUTES VIEW ── */
+    /* ROUTES VIEW */
     .routes-wrap { padding: 20px; }
     .route-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 16px; overflow: hidden; position: relative; }
     .route-img { height: 120px; background: linear-gradient(45deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: center; font-size: 30px; }
     .route-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; color: var(--white); border: 1px solid rgba(255,255,255,0.1); }
     .route-info { padding: 16px; }
     .route-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
-    .route-desc { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; }
+    .route-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
     .route-meta { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--cyan); }
 
-    /* ── PROFILE VIEW (YANGI OYNA) ── */
+    /* PROFILE VIEW */
     .profile-wrap { padding: 20px; }
     .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--red)); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 3px solid var(--bg); outline: 2px solid var(--cyan-glow); }
     .profile-name { font-size: 20px; font-weight: 800; color: var(--white); margin-bottom: 4px; text-align: center; }
     .profile-id { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; text-align: center; }
     
-    .prof-stats-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 20px; padding: 16px; }
+    .prof-stats-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 14px; padding: 16px; }
     .prof-stat-row { display: flex; justify-content: space-around; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid rgba(255,255,255,0.04); }
     .prof-stat-item { text-align: center; }
     .prof-stat-val { font-size: 22px; font-weight: 900; color: var(--cyan); margin-bottom: 4px; }
-    .prof-stat-lbl { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .prof-stat-lbl { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
     
     .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .goal-title { font-size: 13px; font-weight: 800; color: var(--white); }
     .goal-text { font-size: 13px; font-weight: 800; color: var(--cyan); }
     .goal-track { height: 8px; background: var(--surface-2); border-radius: 99px; overflow: hidden; margin-bottom: 8px; }
-    .goal-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 1s cubic-bezier(.4,0,.2,1); }
+    .goal-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 1s; }
     .goal-desc { font-size: 11px; color: var(--text-muted); text-align: center; }
+
+    /* PR SECTION (YANGI) */
+    .pr-section { display: flex; gap: 10px; margin-bottom: 14px; }
+    .pr-card { flex: 1; background: linear-gradient(135deg, rgba(0,200,255,0.06), rgba(0,200,255,0.01)); border: 1px solid rgba(0,200,255,0.15); border-radius: var(--radius); padding: 14px 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,200,255,0.05); }
+    .pr-dist { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
+    .pr-pace { font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 1px;}
 
     .badges-wrap { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); padding: 16px; }
     .badges-title { font-size: 13px; font-weight: 800; color: var(--white); margin-bottom: 14px; text-align: center;}
     .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-    .badge-item { background: var(--surface); border-radius: 12px; padding: 12px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; gap: 6px; transition: transform 0.2s;}
-    .badge-item:active { transform: scale(0.95); }
+    .badge-item { background: var(--surface); border-radius: 12px; padding: 12px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .badge-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
     .badge-name { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
 
@@ -216,21 +184,17 @@
 </head>
 <body>
 
-<!-- ── AMBIENT ── -->
 <div class="ambient ambient-1"></div>
 <div class="ambient ambient-2"></div>
 
-<!-- ── SPLASH ── -->
 <div id="splash">
   <div class="splash-logo">🏔️</div>
   <div class="splash-wordmark">URGUT <span>RUN</span> CLUB</div>
   <div class="splash-bar"><div class="splash-fill"></div></div>
 </div>
 
-<!-- ── APP ── -->
 <div id="app">
 
-  <!-- HEADER -->
   <div class="header">
     <div class="header-left">
       <div class="header-eyebrow">Sportiv Portal 2026</div>
@@ -239,14 +203,13 @@
     <div class="live-badge"><div class="live-dot"></div>JONLI</div>
   </div>
 
-  <!-- 1. VIEW: RATING -->
+  <!-- RATING -->
   <div id="view-rating" class="view-section active">
     <div class="stats-row">
       <div class="stat-tile c"><div id="total-runners" class="stat-value c">—</div><div class="stat-label">🏃 Faollar</div></div>
       <div class="stat-tile r"><div id="total-distance" class="stat-value r">—</div><div class="stat-label">🏁 Jami km</div></div>
       <div class="stat-tile w"><div class="stat-value w">#1</div><div class="stat-label">⛰ Urgut</div></div>
     </div>
-
     <div class="countdown-card">
       <div class="cd-eyebrow">⏱ Keyingi Yig'ilish</div>
       <div id="cd-title" class="cd-title">Navbatdagi Umumiy Yig'ilish</div>
@@ -261,15 +224,13 @@
         <div class="cd-meta-item">🕕 <strong id="cd-time">Yakshanba, 06:30</strong></div>
       </div>
     </div>
-
     <div class="tabs-wrap">
       <div class="tabs">
-        <button class="tab-btn active" data-activity="run"   onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
-        <button class="tab-btn"        data-activity="walk"  onclick="switchTab(this,'walk')">🚶‍♂️ Yurish</button>
-        <button class="tab-btn"        data-activity="cycle" onclick="switchTab(this,'cycle')">🚴‍♂️ Velosiped</button>
+        <button class="tab-btn active" data-activity="run" onclick="switchTab(this,'run')">🏃‍♂️ Yugurish</button>
+        <button class="tab-btn" data-activity="walk" onclick="switchTab(this,'walk')">🚶‍♂️ Yurish</button>
+        <button class="tab-btn" data-activity="cycle" onclick="switchTab(this,'cycle')">🚴‍♂️ Velosiped</button>
       </div>
     </div>
-
     <div class="time-filters-wrap">
       <div class="time-tabs">
         <button class="time-btn" data-time="weekly" onclick="switchTime(this, 'weekly')">Haftalik</button>
@@ -278,7 +239,6 @@
         <button class="time-btn active" data-time="all" onclick="switchTime(this, 'all')">Umumiy</button>
       </div>
     </div>
-
     <div class="podium-wrap" id="podium-wrap">
       <div class="podium-label">🏆 Top 3</div>
       <div class="podium-stage" id="podium-stage"></div>
@@ -292,7 +252,7 @@
     </div>
   </div>
 
-  <!-- 2. VIEW: ROUTES -->
+  <!-- ROUTES -->
   <div id="view-routes" class="view-section">
     <div class="routes-wrap">
       <div class="route-card">
@@ -314,14 +274,13 @@
     </div>
   </div>
 
-  <!-- 3. VIEW: PROFILE (YANGILANGAN QISM) -->
+  <!-- PROFILE -->
   <div id="view-profile" class="view-section">
     <div class="profile-wrap">
       <div class="profile-avatar">🏃‍♂️</div>
       <div class="profile-name" id="prof-name">Yuklanmoqda...</div>
       <div class="profile-id" id="prof-id">@urgut_run</div>
 
-      <!-- Oylik Maqsad va Statistika -->
       <div class="prof-stats-card">
         <div class="prof-stat-row">
           <div class="prof-stat-item">
@@ -330,10 +289,9 @@
           </div>
           <div class="prof-stat-item">
             <div class="prof-stat-val" id="prof-strike">0</div>
-            <div class="prof-stat-lbl">🔥 Streak (kun)</div>
+            <div class="prof-stat-lbl">🔥 Streak</div>
           </div>
         </div>
-
         <div class="goal-section">
           <div class="goal-header">
             <span class="goal-title">🎯 Oylik Maqsad</span>
@@ -346,49 +304,50 @@
         </div>
       </div>
 
-      <!-- Nishonlar (Badges) -->
+      <!-- SHAXSIY REKORDLAR (YANGI QO'SHILDI) -->
+      <div class="pr-section">
+        <div class="pr-card">
+          <div class="pr-dist">⚡ Eng tez 5 km</div>
+          <div class="pr-pace" id="prof-best-5k">--:--</div>
+        </div>
+        <div class="pr-card">
+          <div class="pr-dist">⚡ Eng tez 10 km</div>
+          <div class="pr-pace" id="prof-best-10k">--:--</div>
+        </div>
+      </div>
+
       <div class="badges-wrap">
         <div class="badges-title">🏅 Yutuqlar va Nishonlar</div>
-        <div class="badges-grid" id="prof-badges">
-           <!-- JavaScript yordamida bazadan olinadi -->
-        </div>
+        <div class="badges-grid" id="prof-badges"></div>
       </div>
 
     </div>
   </div>
 
-  <!-- FOOTER -->
   <div class="footer">© 2026 <span>Urgut Run Club</span> · Sport yangi avlod uchun</div>
 
-  <!-- BOTTOM NAVIGATION -->
+  <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchMainView(this, 'view-rating')">
-      <div class="nav-icon">🏆</div>Reyting
-      <div class="nav-indicator"></div>
+      <div class="nav-icon">🏆</div>Reyting<div class="nav-indicator"></div>
     </button>
     <button class="nav-btn" onclick="switchMainView(this, 'view-routes')">
-      <div class="nav-icon">🗺</div>Marshrutlar
-      <div class="nav-indicator"></div>
+      <div class="nav-icon">🗺</div>Marshrutlar<div class="nav-indicator"></div>
     </button>
     <button class="nav-btn" onclick="switchMainView(this, 'view-profile')">
-      <div class="nav-icon">👤</div>Profil
-      <div class="nav-indicator"></div>
+      <div class="nav-icon">👤</div>Profil<div class="nav-indicator"></div>
     </button>
   </div>
 
-</div><!-- /app -->
+</div>
 
 <script>
 (() => {
   const tg = window.Telegram?.WebApp;
   if (tg) { tg.expand(); tg.setHeaderColor?.('#080B10'); tg.setBackgroundColor?.('#080B10'); }
-
   const API = "https://urgutrunclub-bot.onrender.com";
   const TARGET = { run: 42, walk: 50, cycle: 100 };
-  let currentTab = 'run';
-  let currentTime = 'all';
-  let eventDate  = null;
-  let cdInterval = null;
+  let currentTab = 'run', currentTime = 'all', eventDate = null, cdInterval = null;
 
   setTimeout(() => {
     document.getElementById('splash').classList.add('hide');
@@ -400,23 +359,16 @@
     btn.classList.add('active');
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
-
-    // Agar profil ochilsa, ma'lumotlarni tortamiz
-    if(viewId === 'view-profile') {
-      loadProfileData();
-    }
+    if(viewId === 'view-profile') loadProfileData();
   };
 
-  /* ── YANGI FUNKSIYA: BAZADAN PROFILNI YUKLASH ── */
   async function loadProfileData() {
-    let userId = 123456789; // Telegram o'chirilgan bo'lsa default ID
+    let userId = 123456789;
     if(tg && tg.initDataUnsafe?.user) {
       userId = tg.initDataUnsafe.user.id;
       document.getElementById('prof-name').textContent = tg.initDataUnsafe.user.first_name || 'Foydalanuvchi';
       document.getElementById('prof-id').textContent = '@' + (tg.initDataUnsafe.user.username || tg.initDataUnsafe.user.id);
-    } else {
-      document.getElementById('prof-name').textContent = 'Test Foydalanuvchi';
-    }
+    } else { document.getElementById('prof-name').textContent = 'Test Foydalanuvchi'; }
 
     try {
       const res = await fetch(`${API}/api/profile/${userId}`);
@@ -428,8 +380,11 @@
         document.getElementById('prof-strike').textContent = d.strike;
         document.getElementById('prof-month-km').textContent = d.month_km;
         document.getElementById('prof-goal-km').textContent = d.goal;
+
+        // Yangi: Rekordlarni chiqarish
+        document.getElementById('prof-best-5k').textContent = d.best_5k;
+        document.getElementById('prof-best-10k').textContent = d.best_10k;
         
-        // Progress bar mantiqi
         let pct = 0;
         if(d.goal > 0) {
           pct = Math.min((d.month_km / d.goal) * 100, 100);
@@ -437,55 +392,39 @@
         } else {
           document.getElementById('prof-goal-desc').textContent = "Maqsad kiritish uchun botga /goal 50 deb yozing";
         }
-        
-        setTimeout(() => {
-          document.getElementById('prof-goal-fill').style.width = pct + '%';
-        }, 100);
+        setTimeout(() => { document.getElementById('prof-goal-fill').style.width = pct + '%'; }, 100);
 
-        // Medallar mantiqi
         let badges = '';
         if(d.total_km >= 10) badges += `<div class="badge-item"><div class="badge-icon">🏃‍♂️</div><div class="badge-name">Boshlang'ich</div></div>`;
         if(d.total_km >= 50) badges += `<div class="badge-item"><div class="badge-icon">🐆</div><div class="badge-name">Urgut Qoploni</div></div>`;
         if(d.total_km >= 100) badges += `<div class="badge-item"><div class="badge-icon">🏔</div><div class="badge-name">Tog' Qahramoni</div></div>`;
         if(d.strike >= 7) badges += `<div class="badge-item"><div class="badge-icon">🛡</div><div class="badge-name">Temir Iroda</div></div>`;
         if(d.strike >= 30) badges += `<div class="badge-item"><div class="badge-icon">🔥</div><div class="badge-name">Afsona</div></div>`;
-        
-        if(badges === '') badges = `<div style="color:var(--text-muted); font-size:12px; grid-column:span 3; text-align:center;">Hali nishonlar yo'q. Natija kiritib nishonlarga ega bo'ling!</div>`;
-        
+        if(badges === '') badges = `<div style="color:var(--text-muted); font-size:12px; grid-column:span 3; text-align:center;">Hali nishonlar yo'q.</div>`;
         document.getElementById('prof-badges').innerHTML = badges;
       }
-    } catch(e) {
-      console.error("Profile load error", e);
-    }
+    } catch(e) { console.error("Profile load error", e); }
   }
 
   async function fetchEvent() {
     try {
-      const res  = await fetch(`${API}/api/get_event`);
+      const res = await fetch(`${API}/api/get_event`);
       const data = await res.json();
       if (data.success && data.event_date) {
         eventDate = new Date(data.event_date.replace(/-/g, '/'));
-        if (data.title)     document.getElementById('cd-title').textContent = data.title;
-        if (data.location)  document.getElementById('cd-loc').textContent   = data.location;
-        if (data.time_text) document.getElementById('cd-time').textContent  = data.time_text;
+        if (data.title) document.getElementById('cd-title').textContent = data.title;
+        if (data.location) document.getElementById('cd-loc').textContent = data.location;
+        if (data.time_text) document.getElementById('cd-time').textContent = data.time_text;
       }
     } catch (e) { console.warn('Event fetch failed'); }
     startCountdown();
   }
 
-  function startCountdown() {
-    if (cdInterval) clearInterval(cdInterval);
-    tick();
-    cdInterval = setInterval(tick, 1000);
-  }
-
+  function startCountdown() { if (cdInterval) clearInterval(cdInterval); tick(); cdInterval = setInterval(tick, 1000); }
   function tick() {
     if (!eventDate) return;
     const diff = eventDate - Date.now();
-    if (diff <= 0) {
-      ['d','h','m','s'].forEach(k => { document.getElementById(`cd-${k}`).textContent = '00'; });
-      return;
-    }
+    if (diff <= 0) { ['d','h','m','s'].forEach(k => { document.getElementById(`cd-${k}`).textContent = '00'; }); return; }
     const fmt = n => String(n).padStart(2,'0');
     document.getElementById('cd-d').textContent = fmt(Math.floor(diff / 86400000));
     document.getElementById('cd-h').textContent = fmt(Math.floor((diff % 86400000) / 3600000));
@@ -493,84 +432,47 @@
     document.getElementById('cd-s').textContent = fmt(Math.floor((diff % 60000)    / 1000));
   }
 
-  window.switchTab = (btn, activity) => {
-    if (currentTab === activity) return;
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTab = activity;
-    loadLeaderboard();
-  };
-
-  window.switchTime = (btn, time) => {
-    if (currentTime === time) return;
-    document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentTime = time;
-    const labels = { 'weekly': 'Haftalik Natijalar', 'monthly': 'Oylik Natijalar', 'yearly': 'Yillik Natijalar', 'all': 'Umumiy Natijalar' };
-    document.getElementById('board-label').textContent = labels[time];
-    loadLeaderboard();
-  };
+  window.switchTab = (btn, activity) => { if (currentTab === activity) return; document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentTab = activity; loadLeaderboard(); };
+  window.switchTime = (btn, time) => { if (currentTime === time) return; document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentTime = time; document.getElementById('board-label').textContent = { 'weekly': 'Haftalik Natijalar', 'monthly': 'Oylik Natijalar', 'yearly': 'Yillik Natijalar', 'all': 'Umumiy Natijalar' }[time]; loadLeaderboard(); };
 
   async function loadLeaderboard() {
-    const boardList = document.getElementById('board-list');
-    const podiumWrap = document.getElementById('podium-wrap');
-    const stage = document.getElementById('podium-stage');
-
+    const boardList = document.getElementById('board-list'), podiumWrap = document.getElementById('podium-wrap'), stage = document.getElementById('podium-stage');
     boardList.innerHTML = `<div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>`;
     podiumWrap.style.display = 'none';
 
     try {
-      const res  = await fetch(`${API}/api/leaderboard/${currentTab}?time=${currentTime}`);
+      const res = await fetch(`${API}/api/leaderboard/${currentTab}?time=${currentTime}`);
       const data = await res.json();
-
       if (!data.success || !data.data?.length) {
         boardList.innerHTML = `<div class="state-box"><div class="state-icon">📭</div><div class="state-text">Hozircha natijalar mavjud emas</div></div>`;
-        document.getElementById('total-runners').textContent = 0;
-        document.getElementById('total-distance').textContent = "0.0";
-        return;
+        document.getElementById('total-runners').textContent = 0; document.getElementById('total-distance').textContent = "0.0"; return;
       }
-
-      const players = data.data;
-      const target  = TARGET[currentTab];
-
-      const podiumOrder = [1, 0, 2];
-      const medals = ['🥈','🥇','🥉'];
-      const posClass = ['pos-2','pos-1','pos-3'];
+      const players = data.data, target = TARGET[currentTab], podiumOrder = [1, 0, 2], medals = ['🥈','🥇','🥉'], posClass = ['pos-2','pos-1','pos-3'];
       stage.innerHTML = podiumOrder.map((idx, i) => {
         const p = players[idx];
         if (!p) return `<div class="podium-card ${posClass[i]} empty"></div>`;
-        const name = (p.name && p.name !== 'null') ? p.name : 'Foydalanuvchi';
-        return `<div class="podium-card ${posClass[i]}"><div class="podium-emoji">${medals[i]}</div><div class="podium-name">${name}</div><div class="podium-km">${p.distance} km</div></div>`;
+        return `<div class="podium-card ${posClass[i]}"><div class="podium-emoji">${medals[i]}</div><div class="podium-name">${p.name||'Foydalanuvchi'}</div><div class="podium-km">${p.distance} km</div></div>`;
       }).join('');
       podiumWrap.style.display = 'block';
 
       boardList.innerHTML = '';
       players.forEach((p, idx) => {
-        const name     = (p.name && p.name !== 'null') ? p.name : 'Foydalanuvchi';
         const progress = Math.min((p.distance / target) * 100, 100);
-        const rankEl   = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span class="num">${idx+1}</span>`;
+        const rankEl = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `<span class="num">${idx+1}</span>`;
         const topClass = idx === 0 ? 'top1' : idx === 1 ? 'top2' : idx === 2 ? 'top3' : '';
-        const streak   = p.strike > 0 ? `<span class="fire-badge">🔥 ${p.strike} kun</span>` : '';
-
-        const row = document.createElement('div');
-        row.className = `player-row ${topClass}`;
-        row.innerHTML = `<div class="player-rank">${rankEl}</div><div class="player-info"><div class="player-name-row"><span class="player-name">${name}</span>${streak}</div><div class="prog-track"><div class="prog-fill" data-pct="${progress}"></div></div></div><div class="player-km">${p.distance} km</div>`;
+        const streak = p.strike > 0 ? `<span class="fire-badge">🔥 ${p.strike} kun</span>` : '';
+        const row = document.createElement('div'); row.className = `player-row ${topClass}`;
+        row.innerHTML = `<div class="player-rank">${rankEl}</div><div class="player-info"><div class="player-name-row"><span class="player-name">${p.name||'Foydalanuvchi'}</span>${streak}</div><div class="prog-track"><div class="prog-fill" data-pct="${progress}"></div></div></div><div class="player-km">${p.distance} km</div>`;
         boardList.appendChild(row);
       });
-
       requestAnimationFrame(() => { boardList.querySelectorAll('.prog-fill').forEach(bar => { setTimeout(() => { bar.style.width = bar.dataset.pct + '%'; }, 80); }); });
 
-      document.getElementById('total-runners').textContent  = players.length;
-      const totalKm = players.reduce((s, p) => s + (parseFloat(p.distance) || 0), 0);
-      document.getElementById('total-distance').textContent = totalKm.toFixed(1);
-
-    } catch (e) {
-      boardList.innerHTML = `<div class="state-box"><div class="state-icon">⚡</div><div class="state-text">Server bilan aloqa yo'q</div></div>`;
-    }
+      document.getElementById('total-runners').textContent = players.length;
+      document.getElementById('total-distance').textContent = players.reduce((s, p) => s + (parseFloat(p.distance) || 0), 0).toFixed(1);
+    } catch (e) { boardList.innerHTML = `<div class="state-box"><div class="state-icon">⚡</div><div class="state-text">Server bilan aloqa yo'q</div></div>`; }
   }
 
-  fetchEvent();
-  loadLeaderboard();
+  fetchEvent(); loadLeaderboard();
 })();
 </script>
 </body>

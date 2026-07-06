@@ -136,13 +136,13 @@
     .skeleton { background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%); background-size: 800px 100%; animation: shimmer 1.4s infinite; border-radius: var(--radius); height: 66px; }
     
     /* ROUTES VIEW */
-    .routes-wrap { padding: 20px; }
-    .route-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); margin-bottom: 16px; overflow: hidden; position: relative; }
-    .route-img { height: 120px; background: linear-gradient(45deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: center; font-size: 30px; }
+    .routes-wrap { padding: 20px; display: flex; flex-direction: column; gap: 16px;}
+    .route-card { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); overflow: hidden; position: relative; }
+    .route-img { height: 160px; background: linear-gradient(45deg, var(--surface), var(--surface-2)); display: flex; align-items: center; justify-content: center; font-size: 30px; position: relative;}
     .route-badge { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 700; color: var(--white); border: 1px solid rgba(255,255,255,0.1); }
     .route-info { padding: 16px; }
     .route-title { font-size: 16px; font-weight: 800; color: var(--white); margin-bottom: 6px; }
-    .route-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    .route-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;}
     .route-meta { display: flex; gap: 12px; font-size: 12px; font-weight: 700; color: var(--cyan); }
 
     /* PROFILE VIEW */
@@ -170,7 +170,6 @@
     .pr-dist { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
     .pr-pace { font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 1px;}
 
-    /* YUKLASH TUGMASI UCHUN YANGI CSS */
     .load-more-btn { background: var(--surface-2); border: 1px solid rgba(255,255,255,0.05); color: var(--cyan); width: 100%; padding: 12px; border-radius: var(--radius); font-weight: 700; font-size: 12px; margin-top: 10px; cursor: pointer; transition: 0.2s; } 
     .load-more-btn:active { transform: scale(0.98); }
 
@@ -256,25 +255,10 @@
     </div>
   </div>
 
-  <!-- ROUTES -->
+  <!-- ROUTES (ENDI DINAMIK) -->
   <div id="view-routes" class="view-section">
-    <div class="routes-wrap">
-      <div class="route-card">
-        <div class="route-img">🌲<div class="route-badge">Yengil</div></div>
-        <div class="route-info">
-          <div class="route-title">Bog' Atrofi Marshruti</div>
-          <div class="route-desc">Urgut markaziy istirohat bog'i atrofida toza havodagi qulay yugurish yo'lagi. Yangi boshlovchilar uchun ayni muddao.</div>
-          <div class="route-meta"><span>📏 1.5 km (1 krug)</span><span>🏔 Tekislik</span></div>
-        </div>
-      </div>
-      <div class="route-card">
-        <div class="route-img">⛰<div class="route-badge">O'rta</div></div>
-        <div class="route-info">
-          <div class="route-title">Tog' Yonbag'ri</div>
-          <div class="route-desc">Tog' havosi va biroz qiyaliklarga ega bo'lgan marshrut. O'pkani tozalash va chidamlilikni oshirish uchun ideal joy.</div>
-          <div class="route-meta"><span>📏 5.0 km</span><span>⬆️ Qiyalik: 45m</span></div>
-        </div>
-      </div>
+    <div class="routes-wrap" id="routes-container">
+       <div class="skeleton"></div><div class="skeleton"></div>
     </div>
   </div>
 
@@ -352,7 +336,6 @@
   const TARGET = { run: 42, walk: 50, cycle: 100 };
   let currentTab = 'run', currentTime = 'all', eventDate = null, cdInterval = null;
   
-  // PAGINATION VARS
   let currentOffset = 0;
   const LIMIT = 10;
 
@@ -366,9 +349,40 @@
     btn.classList.add('active');
     document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
     document.getElementById(viewId).classList.add('active');
+    
     if(viewId === 'view-profile') loadProfileData();
+    if(viewId === 'view-routes') loadRoutes(); // Marshrutlar bosilganda bazadan yuklaydi
   };
 
+  // ================= MARSHRUTLARNI BAZADAN TORTIB OLISH =================
+  async function loadRoutes() {
+    const container = document.getElementById('routes-container');
+    try {
+      const res = await fetch(`${API}/api/routes`);
+      const json = await res.json();
+      
+      if (json.success && json.data.length > 0) {
+        container.innerHTML = json.data.map(r => `
+          <div class="route-card">
+            <div class="route-img" style="background-image: url('${r.image_url}'); background-size: cover; background-position: center;">
+              <div class="route-badge">${r.difficulty}</div>
+            </div>
+            <div class="route-info">
+              <div class="route-title">${r.title}</div>
+              <div class="route-desc">${r.description}</div>
+              <div class="route-meta"><span>📏 ${r.distance}</span></div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        container.innerHTML = `<div class="state-box"><div class="state-icon">🗺</div><div class="state-text">Hozircha marshrutlar qo'shilmagan</div></div>`;
+      }
+    } catch (e) {
+      container.innerHTML = `<div class="state-box"><div class="state-text">Ma'lumotni yuklashda xatolik</div></div>`;
+    }
+  }
+
+  // BOSHQA FUNKSIYALAR...
   async function loadProfileData() {
     let userId = 123456789;
     if(tg && tg.initDataUnsafe?.user) {
@@ -380,17 +394,14 @@
     try {
       const res = await fetch(`${API}/api/profile/${userId}`);
       const json = await res.json();
-      
       if(json.success) {
         const d = json.data;
         document.getElementById('prof-total-km').textContent = d.total_km;
         document.getElementById('prof-strike').textContent = d.strike;
         document.getElementById('prof-month-km').textContent = d.month_km;
         document.getElementById('prof-goal-km').textContent = d.goal;
-
         document.getElementById('prof-best-5k').textContent = d.best_5k;
         document.getElementById('prof-best-10k').textContent = d.best_10k;
-        
         let pct = 0;
         if(d.goal > 0) {
           pct = Math.min((d.month_km / d.goal) * 100, 100);
@@ -399,7 +410,6 @@
           document.getElementById('prof-goal-desc').textContent = "Maqsad kiritish uchun botga /goal 50 deb yozing";
         }
         setTimeout(() => { document.getElementById('prof-goal-fill').style.width = pct + '%'; }, 100);
-
         let badges = '';
         if(d.total_km >= 10) badges += `<div class="badge-item"><div class="badge-icon">🏃‍♂️</div><div class="badge-name">Boshlang'ich</div></div>`;
         if(d.total_km >= 50) badges += `<div class="badge-item"><div class="badge-icon">🐆</div><div class="badge-name">Urgut Qoploni</div></div>`;
@@ -409,7 +419,7 @@
         if(badges === '') badges = `<div style="color:var(--text-muted); font-size:12px; grid-column:span 3; text-align:center;">Hali nishonlar yo'q.</div>`;
         document.getElementById('prof-badges').innerHTML = badges;
       }
-    } catch(e) { console.error("Profile load error", e); }
+    } catch(e) {}
   }
 
   async function fetchEvent() {
@@ -422,7 +432,7 @@
         if (data.location) document.getElementById('cd-loc').textContent = data.location;
         if (data.time_text) document.getElementById('cd-time').textContent = data.time_text;
       }
-    } catch (e) { console.warn('Event fetch failed'); }
+    } catch (e) {}
     startCountdown();
   }
 
@@ -504,7 +514,6 @@
         btn.onclick = () => loadLeaderboard(true);
         boardList.appendChild(btn);
       }
-
     } catch (e) { 
       if(!append) boardList.innerHTML = `<div class="state-box"><div class="state-icon">⚡</div><div class="state-text">Server bilan aloqa yo'q</div></div>`; 
     }

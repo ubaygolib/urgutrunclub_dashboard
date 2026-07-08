@@ -164,21 +164,30 @@
     .goal-fill { height: 100%; background: linear-gradient(90deg, var(--red), var(--cyan)); border-radius: 99px; width: 0%; transition: width 1s; }
     .goal-desc { font-size: 11px; color: var(--text-muted); text-align: center; }
 
-    /* PR SECTION */
     .pr-section { display: flex; gap: 10px; margin-bottom: 14px; }
     .pr-card { flex: 1; background: linear-gradient(135deg, rgba(0,200,255,0.06), rgba(0,200,255,0.01)); border: 1px solid rgba(0,200,255,0.15); border-radius: var(--radius); padding: 14px 10px; text-align: center; box-shadow: 0 4px 12px rgba(0,200,255,0.05); }
     .pr-dist { font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
     .pr-pace { font-size: 20px; font-weight: 900; color: var(--cyan); letter-spacing: 1px;}
 
-    .load-more-btn { background: var(--surface-2); border: 1px solid rgba(255,255,255,0.05); color: var(--cyan); width: 100%; padding: 12px; border-radius: var(--radius); font-weight: 700; font-size: 12px; margin-top: 10px; cursor: pointer; transition: 0.2s; } 
-    .load-more-btn:active { transform: scale(0.98); }
-
-    .badges-wrap { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); padding: 16px; }
+    .badges-wrap { background: var(--bg-card); border-radius: var(--radius); border: 1px solid rgba(255,255,255,0.04); padding: 16px; margin-bottom: 14px;}
     .badges-title { font-size: 13px; font-weight: 800; color: var(--white); margin-bottom: 14px; text-align: center;}
     .badges-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
     .badge-item { background: var(--surface); border-radius: 12px; padding: 12px 6px; text-align: center; border: 1px solid rgba(255,255,255,0.02); display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .badge-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
     .badge-name { font-size: 10px; font-weight: 700; color: var(--text); line-height: 1.2; }
+
+    /* TARIX BO'LIMI CSS */
+    .hist-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+    .hist-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .hist-left { display: flex; align-items: center; gap: 12px; }
+    .hist-icon { font-size: 20px; background: var(--surface); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.02); }
+    .hist-km { font-size: 14px; font-weight: 800; color: var(--white); }
+    .hist-date { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-top: 2px; }
+    .hist-pace { font-size: 15px; font-weight: 900; color: var(--cyan); text-align: right; }
+    .hist-pace span { font-size: 9px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+    .load-more-btn { background: var(--surface-2); border: 1px solid rgba(255,255,255,0.05); color: var(--cyan); width: 100%; padding: 12px; border-radius: var(--radius); font-weight: 700; font-size: 12px; margin-top: 10px; cursor: pointer; transition: 0.2s; } 
+    .load-more-btn:active { transform: scale(0.98); }
 
     .section-div { height: 1px; background: rgba(255,255,255,0.04); margin: 20px 20px 0; }
     .footer { text-align: center; padding: 28px 20px 0; font-size: 11px; color: var(--text-dim); letter-spacing: 0.06em; }
@@ -206,7 +215,6 @@
     <div class="live-badge"><div class="live-dot"></div>JONLI</div>
   </div>
 
-  <!-- RATING -->
   <div id="view-rating" class="view-section active">
     <div class="stats-row">
       <div class="stat-tile c"><div id="total-runners" class="stat-value c">—</div><div class="stat-label">🏃 Faollar</div></div>
@@ -255,14 +263,12 @@
     </div>
   </div>
 
-  <!-- ROUTES (ENDI DINAMIK) -->
   <div id="view-routes" class="view-section">
     <div class="routes-wrap" id="routes-container">
        <div class="skeleton"></div><div class="skeleton"></div>
     </div>
   </div>
 
-  <!-- PROFILE -->
   <div id="view-profile" class="view-section">
     <div class="profile-wrap">
       <div class="profile-avatar">🏃‍♂️</div>
@@ -304,6 +310,12 @@
       </div>
 
       <div class="badges-wrap">
+        <div class="badges-title">📅 Oxirgi Natijalar Tarixi</div>
+        <div id="prof-history">
+          </div>
+      </div>
+
+      <div class="badges-wrap">
         <div class="badges-title">🏅 Yutuqlar va Nishonlar</div>
         <div class="badges-grid" id="prof-badges"></div>
       </div>
@@ -313,7 +325,6 @@
 
   <div class="footer">© 2026 <span>Urgut Run Club</span> · Sport yangi avlod uchun</div>
 
-  <!-- BOTTOM NAV -->
   <div class="bottom-nav">
     <button class="nav-btn active" onclick="switchMainView(this, 'view-rating')">
       <div class="nav-icon">🏆</div>Reyting<div class="nav-indicator"></div>
@@ -351,10 +362,9 @@
     document.getElementById(viewId).classList.add('active');
     
     if(viewId === 'view-profile') loadProfileData();
-    if(viewId === 'view-routes') loadRoutes(); // Marshrutlar bosilganda bazadan yuklaydi
+    if(viewId === 'view-routes') loadRoutes();
   };
 
-  // ================= MARSHRUTLARNI BAZADAN TORTIB OLISH =================
   async function loadRoutes() {
     const container = document.getElementById('routes-container');
     try {
@@ -382,7 +392,6 @@
     }
   }
 
-  // BOSHQA FUNKSIYALAR...
   async function loadProfileData() {
     let userId = 123456789;
     if(tg && tg.initDataUnsafe?.user) {
@@ -410,6 +419,7 @@
           document.getElementById('prof-goal-desc').textContent = "Maqsad kiritish uchun botga /goal 50 deb yozing";
         }
         setTimeout(() => { document.getElementById('prof-goal-fill').style.width = pct + '%'; }, 100);
+        
         let badges = '';
         if(d.total_km >= 10) badges += `<div class="badge-item"><div class="badge-icon">🏃‍♂️</div><div class="badge-name">Boshlang'ich</div></div>`;
         if(d.total_km >= 50) badges += `<div class="badge-item"><div class="badge-icon">🐆</div><div class="badge-name">Urgut Qoploni</div></div>`;
@@ -418,6 +428,29 @@
         if(d.strike >= 30) badges += `<div class="badge-item"><div class="badge-icon">🔥</div><div class="badge-name">Afsona</div></div>`;
         if(badges === '') badges = `<div style="color:var(--text-muted); font-size:12px; grid-column:span 3; text-align:center;">Hali nishonlar yo'q.</div>`;
         document.getElementById('prof-badges').innerHTML = badges;
+
+        // YANGI: TARIXNI CHIQARISH
+        let histHTML = '';
+        if(d.history && d.history.length > 0) {
+          d.history.forEach(h => {
+            let icon = h.type === 'run' ? '🏃‍♂️' : h.type === 'walk' ? '🚶‍♂️' : '🚴‍♂️';
+            histHTML += `
+              <div class="hist-item">
+                <div class="hist-left">
+                  <div class="hist-icon">${icon}</div>
+                  <div>
+                    <div class="hist-km">${h.distance} km</div>
+                    <div class="hist-date">${h.date}</div>
+                  </div>
+                </div>
+                <div class="hist-pace">${h.pace} <span>/km</span></div>
+              </div>
+            `;
+          });
+        } else {
+          histHTML = `<div style="text-align:center; font-size:12px; color:var(--text-muted); padding: 10px;">Hali natijalar yo'q.</div>`;
+        }
+        document.getElementById('prof-history').innerHTML = histHTML;
       }
     } catch(e) {}
   }
